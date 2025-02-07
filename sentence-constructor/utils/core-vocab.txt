@@ -1,0 +1,146 @@
+# Core Vocabulary for Conversational Romanian (2000 words)
+
+This file contains the 2000 most essential words for everyday Romanian conversation.
+Each entry includes the Romanian word, its English translation, part of speech, and a brief usage example.
+
+-----------------------------------------------------------
+1. Pronouns
+-----------------------------------------------------------
+1. Eu
+   - English: I
+   - Part of Speech: Pronoun
+   - Example: "Eu sunt student." (I am a student.)
+
+2. Tu
+   - English: You (informal)
+   - Part of Speech: Pronoun
+   - Example: "Tu ești prietenos." (You are friendly.)
+
+3. El
+   - English: He
+   - Part of Speech: Pronoun
+   - Example: "El este profesor." (He is a teacher.)
+
+4. Ea
+   - English: She
+   - Part of Speech: Pronoun
+   - Example: "Ea este doctor." (She is a doctor.)
+
+5. Noi
+   - English: We
+   - Part of Speech: Pronoun
+   - Example: "Noi mergem la școală." (We are going to school.)
+
+6. Voi
+   - English: You (plural/formal)
+   - Part of Speech: Pronoun
+   - Example: "Voi sunteți gata?" (Are you ready?)
+
+7. Ei / Ele
+   - English: They (masculine/feminine)
+   - Part of Speech: Pronoun
+   - Example: "Ei sunt aici." (They are here.)
+
+-----------------------------------------------------------
+2. Verbs (Infinitives)
+-----------------------------------------------------------
+8. A fi
+   - English: To be
+   - Part of Speech: Verb
+   - Example: "A fi fericit este important." (To be happy is important.)
+
+9. A avea
+   - English: To have
+   - Part of Speech: Verb
+   - Example: "Eu am o carte." (I have a book.)
+
+10. A merge
+    - English: To go
+    - Part of Speech: Verb
+    - Example: "Noi mergem la magazin." (We are going to the store.)
+
+11. A vorbi
+    - English: To speak
+    - Part of Speech: Verb
+    - Example: "Tu vorbești prea repede." (You speak too fast.)
+
+12. A mânca
+    - English: To eat
+    - Part of Speech: Verb
+    - Example: "El mănâncă mereu la ora prânzului." (He always eats at lunchtime.)
+
+-----------------------------------------------------------
+3. Nouns
+-----------------------------------------------------------
+13. Casă
+    - English: House
+    - Part of Speech: Noun
+    - Example: "Casa mea este frumoasă." (My house is beautiful.)
+
+14. Oraș
+    - English: City
+    - Part of Speech: Noun
+    - Example: "Orașul este aglomerat." (The city is crowded.)
+
+15. Mâncare
+    - English: Food
+    - Part of Speech: Noun
+    - Example: "Mâncarea este gustoasă." (The food is tasty.)
+
+16. Apă
+    - English: Water
+    - Part of Speech: Noun
+    - Example: "Apă rece, te rog." (Cold water, please.)
+
+-----------------------------------------------------------
+4. Adjectives & Adverbs
+-----------------------------------------------------------
+17. Bun
+    - English: Good
+    - Part of Speech: Adjective
+    - Example: "Este o idee bună." (It is a good idea.)
+
+18. Rău
+    - English: Bad
+    - Part of Speech: Adjective
+    - Example: "Aceasta este o situație rău." (This is a bad situation.)
+
+19. Foarte
+    - English: Very
+    - Part of Speech: Adverb
+    - Example: "Sunt foarte fericit." (I am very happy.)
+
+20. Mulțumesc
+    - English: Thank you
+    - Part of Speech: Expression
+    - Example: "Mulțumesc mult!" (Thank you very much!)
+
+-----------------------------------------------------------
+5. Common Expressions & Connectors
+-----------------------------------------------------------
+21. Bună
+    - English: Hello/Hi
+    - Part of Speech: Greeting
+    - Example: "Bună, ce faci?" (Hi, how are you?)
+
+22. La revedere
+    - English: Goodbye
+    - Part of Speech: Expression
+    - Example: "La revedere, ne vedem mâine." (Goodbye, see you tomorrow!)
+
+23. Da
+    - English: Yes
+    - Part of Speech: Adverb
+    - Example: "Da, sunt de acord." (Yes, I agree.)
+
+24. Nu
+    - English: No
+    - Part of Speech: Adverb
+    - Example: "Nu, nu vreau." (No, I don't want to.)
+
+25. Poate
+    - English: Maybe
+    - Part of Speech: Adverb
+    - Example: "Poate vom merge la film." (Maybe we will go to the movies.)
+
+------ to be continued -----

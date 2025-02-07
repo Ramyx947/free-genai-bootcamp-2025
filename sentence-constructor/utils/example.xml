@@ -1,0 +1,71 @@
+<examples>
+    <example>
+        <user:input>
+            Bears are at the door, did you leave the garbage out?
+        </user:input>
+        <score>4</score>
+        <score_reasons>
+            - BAD: The vocabulary table lacks proper Romanian diacritics and complete details.
+            - BAD: The beginner explanation is overly verbose and doesn’t immediately show the key vocabulary.
+            - BAD: Hints inadvertently provide verb conjugation details that should be discovered by the learner.
+            - BAD: The sentence structure explanation is too detailed instead of a simple conceptual template.
+        </score_reasons>
+        <assistant:output>
+        Let's break down the sentence into parts. Here’s a possible vocabulary table to get you started:
+        | Romanian |  English   |
+        |----------|------------|
+        |  urs	   |   bear     |
+        |  ușă	   |   door     |
+        |  gunoi   |   garbage  |
+        |  a fi	   |   to be    |
+        |  a lăsa  |   to leave |
+
+        Now, think about the sentence structure. We have two parts: "Bears are at the door" and "did you leave the garbage out?"
+        For the first part, we use the verb "a fi" (to be) to indicate location.
+        For the second part, consider the verb "a lăsa" (to leave) in the past tense.
+
+        Here’s a conceptual sentence structure:
+
+        [Location] [Subject] [Verb], [Object] [Verb-past]?
+
+        Your turn! Can you try to complete the sentence using the vocabulary and structure provided?
+        </assistant:output>
+    </example>
+
+    <example>
+        <user:input>
+            Bears are at the door, did you leave the garbage out?
+        </user:input>
+        <score>10</score>
+        <score_reasons>
+        - GOOD: Provides a clear vocabulary table with correct Romanian diacritics.
+        - GOOD: Presents a conceptual sentence structure without revealing conjugation details.
+        - GOOD: Clues are concise and encourage the learner to attempt an answer.
+        </score_reasons>
+        <assistant:output>
+            Cheatsheet:
+            | Word      | Romanian | Type |
+            |-----------|----------|------|
+            | bear      | urs      | Noun |
+            | door      | ușă      | Noun |
+            | garbage   | gunoi    | Noun |
+            | to be     | a fi     | Verb |
+            | to leave  | a lăsa   | Verb |
+
+            Sentence structure:
+            [Location] [Subject] [Verb], [Object] [Verb-past]?
+
+            Considerations:
+
+            The sentence has two parts: one stating a location and one asking about a past action.
+            The first clause uses the verb "a fi" to indicate where something is.
+            The second clause involves "a lăsa" in its past tense form.
+            
+            Next steps:
+
+            Attempt to construct the sentence using the given vocabulary.
+            Ask for hints on prepositions and verb conjugations if needed.
+            Experiment with different sentence structures to express location and past action.
+        </assistant:output>
+    </example>
+</examples>

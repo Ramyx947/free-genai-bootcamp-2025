@@ -1,0 +1,54 @@
+<core-grammer>
+Here are the 10 essential Romanian grammar rules for beginners:
+
+1. Gender of Nouns
+   - Every noun is masculine, feminine, or neuter.
+   - Neuter nouns act like masculine in the singular and feminine in the plural.
+   - Always learn the noun’s gender along with the word.
+
+2. Article Usage and Agreement
+   - Definite articles are attached to the end of the noun (e.g., "omul" means "the man").
+   - Indefinite articles precede the noun ("un" for masculine/neuter, "o" for feminine).
+   - Articles must agree with the noun in gender and number.
+
+3. Adjective Agreement
+   - Adjectives change form to match the noun’s gender, number, and sometimes case.
+   - Most adjectives usually come before the noun, though placement can affect meaning.
+   - Ensure adjectives are properly matched to the nouns they describe.
+
+4. Subject Pronouns
+   - Common pronouns include: eu (I), tu (you informal), el/ea (he/she), noi (we), voi (you plural/formal), ei/ele (they).
+   - Subject pronouns are often omitted since the verb ending indicates the subject.
+   - Use them for emphasis or clarity when needed.
+
+5. Present Tense Conjugation
+   - Romanian verbs are grouped by their infinitive endings (e.g., -a, -ea, -i).
+   - Regular verbs follow predictable conjugation patterns.
+   - Irregular verbs, like "a fi" (to be) and "a avea" (to have), have unique forms.
+
+6. Negation
+   - The word "nu" is placed before the verb to form a negative sentence.
+   - Double negation is common and grammatically correct (e.g., "nu am văzut nimic" means "I haven’t seen anything").
+   - Always include "nu" to clearly express negation.
+
+7. Question Formation
+   - Yes/no questions are often indicated by a rising intonation.
+   - Use question words (cine, ce, unde, când, de ce, cum) for specific queries.
+   - Inversion or particles like "oare" may be used to form questions.
+
+8. Possessive Adjectives
+   - Possessive adjectives must agree with the possessed noun in gender and number (e.g., "al meu" for masculine singular, "a mea" for feminine singular).
+   - They typically follow the noun when it is in the definite form.
+   - Always match the possessive form to the noun’s characteristics.
+
+9. Word Order and Adjective Placement
+   - The typical word order is Subject-Verb-Object, though it is flexible.
+   - Adjectives usually precede the noun but may follow it to change the nuance.
+   - Be mindful of word order as it can subtly alter the meaning.
+
+10. Formal vs. Informal Address
+    - Use "tu" for informal situations and "dumneavoastră" for formal address.
+    - Selecting the appropriate form is crucial for proper etiquette.
+    - Adjust your language register based on the social context.
+
+</core-grammer>
