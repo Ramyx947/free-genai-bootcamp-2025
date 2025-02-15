@@ -74,7 +74,7 @@ Romanian has **fewer open-source datasets** compared to major languages like Eng
 ## 5. Functional Requirements
 
 1. **Self-Hosted Environment**  
-   - Deploy on an on-premise AI PC (\$10k–\$15k budget) to serve ~300 students in Nagasaki.
+   - Deploy on an on-premise AI PC (\$10k–\$15k budget) to serve ~300 students in Bucharest.
 2. **Secure Handling of Licensed Materials**  
    - Store course materials in an **internal database**; integrate with RAG for lesson retrieval.  
    - While developing the MVP, no authentication is required.
