@@ -37,6 +37,7 @@ ENV/
 .vscode/
 *.swp
 *.swo
+.cursor
 
 # Logs
 *.log
