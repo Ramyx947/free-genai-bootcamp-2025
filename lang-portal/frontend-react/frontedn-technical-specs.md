@@ -16,7 +16,6 @@
 7. [Footer Requirements](#footer-requirements)
 8. [Technical Notes](#technical-notes)
 
-[↑ Back to Top](#table-of-contents)
 ## Overview
 
 The frontend is built using:
