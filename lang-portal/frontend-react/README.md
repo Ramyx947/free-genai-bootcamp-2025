@@ -20,7 +20,7 @@
 13. [Settings](#settings)
 14. [Reusable Components](#reusable-components)
 
-[↑ Back to Top](#table-of-contents)
+
 ## Overview
 
 Lumina is a comprehensive language learning platform designed to help users master Romanian through interactive exercises, vocabulary management, and progress tracking.
@@ -96,6 +96,7 @@ function MyComponent() {
   return <h1>{t('hello')}</h1>;
 }
 ```
+[↑ Back to Top](#table-of-contents)
 
 ## Project Structure
 
@@ -144,6 +145,7 @@ npm test -- --coverage
 # Run specific test
 npm test -- src/components/__tests__/YourComponent.test.tsx
 ```
+[↑ Back to Top](#table-of-contents)
 
 ## Available Scripts
 
@@ -169,6 +171,8 @@ npm test -- src/components/__tests__/YourComponent.test.tsx
 - Accessibility-first design
 - Responsive layouts
 - Gamification elements
+
+[↑ Back to Top](#table-of-contents)
 
 ## Contributing
 
@@ -241,6 +245,8 @@ The application will be available at `http://localhost:8080`.
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
+[↑ Back to Top](#table-of-contents)
+
 ## What technologies are used for this project?
 
 This project is built with:
@@ -312,6 +318,8 @@ The application includes several configurable settings:
 - **History Reset**: Option to reset user learning history
 
 
+[↑ Back to Top](#table-of-contents)
+
 ## Reusable Components
 
 The project includes several reusable components designed for consistency and maintainability:
@@ -359,3 +367,5 @@ Features:
 - **Badge**: `src/components/ui/badge.tsx` - For tags and status indicators
 - **Button**: `src/components/ui/button.tsx` - Consistent button styling
 - **CustomBreadcrumb**: `src/components/ui/custom-breadcrumb.tsx` - Navigation breadcrumbs
+
+  [↑ Back to Top](#table-of-contents)
