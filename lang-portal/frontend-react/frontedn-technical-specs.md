@@ -484,14 +484,11 @@ Response: {
 }
 ```
 
-#### Preview
-![Footer Preview](./assets/footer.png)
-- Consistent footer present across all pages
-- Responsive design adapting to screen sizes
-- Accessible navigation links
-
 ## Technical Notes
 
 - Responsive design for all screen sizes
 - Accessible following WCAG guidelines
 - Supports offline functionality where possible
+- Consistent footer present across all pages
+- Responsive design adapting to screen sizes
+- Accessible navigation links
