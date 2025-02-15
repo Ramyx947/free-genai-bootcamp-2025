@@ -30,6 +30,8 @@ The frontend is built using:
 
 ## Core Pages & API Requirements
 
+[↑ Back to Top](#table-of-contents)
+
 ### 1. Dashboard (`/dashboard`)
 
 #### Purpose
@@ -79,6 +81,8 @@ Response {
 - Overview cards showing learning progress
 - Quick stats and achievements
 - Start studying button for quick access
+
+[↑ Back to Top](#table-of-contents)
 
 ### 2. Word Groups (`/groups`)
 
@@ -135,6 +139,8 @@ GET /api/groups/:id/words
 ![Group Activities](./reference-images/groups-activities.png)
 - Practice activities specific to group
 - Progress tracking per group
+
+[↑ Back to Top](#table-of-contents)
 
 ### 3. Word Collection (`/words`)
 
@@ -200,6 +206,8 @@ DELETE /api/words/:id
 - Pronunciation guide
 - Translation and usage examples
 
+[↑ Back to Top](#table-of-contents)
+
 ### 4. Study Activities (`/study-activities`)
 
 #### Purpose
@@ -254,6 +262,8 @@ Body: {
 ![Launch Activity](./reference-images/launch-activity-1.png)
 - Activity start screen
 - Instructions and options
+
+[↑ Back to Top](#table-of-contents)
 
 ### 5. Learning Sessions (`/sessions`)
 
@@ -335,6 +345,8 @@ Response: {
 - Quick access to session details
 - Performance overview
 
+[↑ Back to Top](#table-of-contents)
+
 ### 6. Settings (`/settings`)
 
 #### Page Preview
@@ -343,6 +355,8 @@ Response: {
 - Language options
 - Theme selection
 - Account settings
+
+[↑ Back to Top](#table-of-contents)
 
 ## Footer Pages
 
@@ -378,6 +392,8 @@ The footer provides access to important information pages:
 - Mission statement
 - Team details
 
+[↑ Back to Top](#table-of-contents)
+
 ## Error Handling
 
 The frontend implements a centralized error handling system that expects HTTP error responses in this format:
@@ -394,14 +410,7 @@ The frontend implements a centralized error handling system that expects HTTP er
 }
 ```
 
-## Authentication Requirements
-
-The backend should implement:
-- JWT-based authentication
-- Refresh token mechanism
-- CSRF protection
-- Rate limiting
-
+[↑ Back to Top](#table-of-contents)
 ## Data Models
 
 The backend should support these core models:
@@ -491,3 +500,5 @@ Response: {
 - Consistent footer present across all pages
 - Responsive design adapting to screen sizes
 - Accessible navigation links
+
+  [↑ Back to Top](#table-of-contents)
