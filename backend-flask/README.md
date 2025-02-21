@@ -78,18 +78,22 @@ Each directory serves a specific purpose:
 ## API Endpoints
 
 ### Dashboard
+![API Endpoints Overview](./images/api-endpoints.png)
+![API Endpoints Playground](./images/swagger-ui.png)
 ```bash
 GET /api/dashboard
 # Returns learning statistics
 ```
 
 ### Words
+![Words Endpoint](./images/words-response.png)
 ```bash
 GET /api/words
 # Returns vocabulary list
 ```
 
 ### Groups
+![Groups Endpoint](./docs/images/groups-api.png)
 ```bash
 GET /api/groups
 # Returns word categories
@@ -141,16 +145,6 @@ poetry run pytest --cov=app tests/
 # Run specific tests
 poetry run pytest tests/models/  # Only models
 poetry run pytest tests/routes/  # Only routes
-```
-
-### Test Structure
-```
-tests/
-├── conftest.py        # Test setup
-├── test_api.py        # API tests
-├── test_db.py         # Database tests
-├── models/           # Model tests
-└── routes/           # Route tests
 ```
 
 ## API Documentation
