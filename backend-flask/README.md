@@ -93,7 +93,7 @@ GET /api/words
 ```
 
 ### Groups
-![Groups Endpoint](./docs/images/groups-api.png)
+![Groups Endpoint](./images/groups-response.png)
 ```bash
 GET /api/groups
 # Returns word categories
