@@ -58,13 +58,13 @@ poetry shell
 ## Database Setup
 
 
-The application uses SQLite for data storage. Follow these steps to set up the database:
+The application uses SQLite3 for data storage. Follow these steps to set up the database:
 
 1. Initialize the database:
 ```bash
 poetry run invoke init-db
 ```
-This will create a new SQLite database file (`words.db`) and enable foreign key support.
+This will create a new SQLite3 database file (`words.db`) and enable foreign key support.
 
 2. Run database migrations:
 ```bash
