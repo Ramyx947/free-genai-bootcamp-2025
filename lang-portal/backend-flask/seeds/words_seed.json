@@ -1,0 +1,27 @@
+[
+    {
+      "id": 1,
+      "romanian": "măr",
+      "english": "apple",
+      "pronunciation": "mur",
+      "part_of_speech": "noun",
+      "parts": ["fruit"]
+    },
+    {
+      "id": 2,
+      "romanian": "carte",
+      "english": "book",
+      "pronunciation": "kar-te",
+      "part_of_speech": "noun",
+      "parts": ["object"]
+    },
+    {
+      "id": 3,
+      "romanian": "acasă",
+      "english": "home",
+      "pronunciation": "a-ka-să",
+      "part_of_speech": "adverb",
+      "parts": ["place"]
+    }
+  ]
+  

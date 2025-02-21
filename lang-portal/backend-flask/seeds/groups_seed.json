@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "name": "Fructe",
+      "description": "O colecție de fructe comune",
+      "word_count": 1
+    },
+    {
+      "id": 2,
+      "name": "Obiecte",
+      "description": "O colecție de obiecte uzuale",
+      "word_count": 1
+    }
+  ]
+  
