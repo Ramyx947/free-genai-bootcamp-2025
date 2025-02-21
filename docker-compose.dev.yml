@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: 
+      context: ./frontend-react
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend-react:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000
+      - VITE_ENV=development
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  backend:
+    build:
+      context: ./backend-flask
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend-flask:/app
+      - /app/.venv
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - EMBEDDING_SERVICE_URL=http://embedding:6000
+      - LLM_SERVICE_URL=http://llm:9000
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:80
+    command: poetry run flask run --host=0.0.0.0 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  embedding:
+    build:
+      context: ./opea-comps
+      dockerfile: Dockerfile
+    volumes:
+      - ./opea-comps:/app
+      - /app/.venv
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - UVICORN_RELOAD=true
+    command: poetry run uvicorn comps.__main__:app --host 0.0.0.0 --port 6000 --reload
+
+  llm:
+    build:
+      context: ./opea-comps
+      dockerfile: Dockerfile
+    volumes:
+      - ./opea-comps:/app
+      - /app/.venv
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - UVICORN_RELOAD=true
+    command: poetry run uvicorn comps.__main__:app --host 0.0.0.0 --port 9000 --reload
+
+  mega-service:
+    build:
+      context: ./opea-comps
+      dockerfile: Dockerfile
+    volumes:
+      - ./opea-comps:/app
+      - /app/.venv
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - UVICORN_RELOAD=true
+    command: poetry run uvicorn comps.__main__:app --host 0.0.0.0 --port 8000 --reload 

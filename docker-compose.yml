@@ -1,0 +1,84 @@
+services:
+  # Frontend React Service
+  frontend:
+    build:
+      context: ./frontend-react
+      target: development
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend-react:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000
+      - NODE_ENV=development
+    command: npm run dev -- --host 0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - backend
+
+  # Flask Backend Service
+  backend:
+    build:
+      context: ./backend-flask
+      target: development
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend-flask:/app
+      - /app/.venv
+      - ./backend-flask/app/templates:/app/app/templates
+    environment:
+      - FLASK_APP=app
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:80,http://localhost:5000
+    command: poetry run flask run --host=0.0.0.0 --reload
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - embedding
+      - llm
+
+  # OpenAI Components Services
+  embedding:
+    build: 
+      context: ./opea-comps
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_TYPE=embedding
+      - SERVICE_PORT=6000
+    ports:
+      - "6000:6000"
+
+  llm:
+    build: 
+      context: ./opea-comps
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_TYPE=llm
+      - SERVICE_PORT=9000
+    ports:
+      - "9000:9000"
+
+  mega-service:
+    build: 
+      context: ./opea-comps
+      dockerfile: Dockerfile
+    environment:
+      - EMBEDDING_SERVICE_HOST_IP=embedding
+      - EMBEDDING_SERVICE_PORT=6000
+      - LLM_SERVICE_HOST_IP=llm
+      - LLM_SERVICE_PORT=9000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - embedding
+      - llm 
