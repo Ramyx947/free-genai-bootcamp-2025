@@ -42,10 +42,10 @@ Output should generally have these parts:
 
 Examples:
 
-“The bird is black.” → [Subject] [Verb/Adjective].
-“Did you see the raven?” → [Subject] [Object] [Verb]?
-“This morning, I saw the raven.” → [Time] [Subject] [Object] [Verb].
-“They were looking at our garden.” → [Subject] [Verb] [Location].
+- “The bird is black.” → [Subject] [Verb/Adjective].
+- “Did you see the raven?” → [Subject] [Object] [Verb]?
+- “This morning, I saw the raven.” → [Time] [Subject] [Object] [Verb].
+- “They were looking at our garden.” → [Subject] [Verb] [Location].
 
 ### Clues and Considerations
 
@@ -71,8 +71,8 @@ dimineață | /dee-mee-NYAH-tsuh/  | morning
 nostru    | /NOS-troo/           | our
 ei / ele  | /yay/ /EH-leh/       | they
 
-[Time] [Subject] [Object] [Verb]?
-[Subject] [Verb] [Location].
+- [Time] [Subject] [Object] [Verb]?
+- [Subject] [Verb] [Location].
 
 ### Clues and Considerations
 
