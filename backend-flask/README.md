@@ -27,6 +27,40 @@ poetry run python app.py
 
 The API will run at `http://localhost:5000`
 
+## API Documentation
+
+### API Overview
+![API Endpoints Overview](./images/api-endpoints.png)
+
+### Detailed Endpoints
+
+#### Dashboard API
+![Dashboard Endpoint](./images/dashboard-stats.png)
+```bash
+GET /api/dashboard
+# Returns learning statistics
+```
+
+#### Words API
+![Words Endpoint](./images/words-response.png)
+```bash
+GET /api/words
+# Returns vocabulary list
+
+GET /api/words/<id>
+# Returns specific word details
+```
+
+#### Groups API
+![Groups Endpoint](./docs/images/groups-api.png)
+```bash
+GET /api/groups
+# Returns word categories
+
+POST /api/groups
+# Creates new category
+```
+
 ## Project Structure
 ```
 backend-flask/
@@ -60,6 +94,8 @@ backend-flask/
 │   └── routes/         # Route tests
 ├── migrations/         # Database migrations
 ├── seeds/             # Sample data
+├── docs/              # Documentation
+│   └── images/        # API documentation images
 ├── pyproject.toml     # Poetry dependencies
 ├── poetry.lock        # Locked dependencies
 └── README.md         # Documentation
@@ -148,8 +184,8 @@ poetry run pytest tests/routes/  # Only routes
 ```
 
 ## API Documentation
-- Swagger UI at `/docs`
-- Interactive API testing
+- Interactive API docs at `/docs`
+- Swagger UI for testing
 - Request/response examples
 - Schema documentation
 
