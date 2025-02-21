@@ -274,7 +274,7 @@ poetry run python app.py
 
 #### Groups Endpoint
 ![Groups Response](images/groups-response.png)
-*Response from GET /api/groups showing word categories*
+*Response from POST /api/groups showing word groups*
 
 #### Dashboard Statistics
 ![Dashboard Stats](images/dashboard-stats.png)
