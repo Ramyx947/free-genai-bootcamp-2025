@@ -57,6 +57,11 @@ services:
       - SERVICE_PORT=6000
     ports:
       - "6000:6000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   llm:
     build: 
@@ -67,12 +72,19 @@ services:
       - SERVICE_PORT=9000
     ports:
       - "9000:9000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  mega-service:
+  mega:
     build: 
       context: ./opea-comps
       dockerfile: Dockerfile
     environment:
+      - SERVICE_TYPE=mega
+      - SERVICE_PORT=8000
       - EMBEDDING_SERVICE_HOST_IP=embedding
       - EMBEDDING_SERVICE_PORT=6000
       - LLM_SERVICE_HOST_IP=llm

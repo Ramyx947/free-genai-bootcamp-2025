@@ -1,24 +1,69 @@
 # OpenAI Components (opea-comps)
 
-A Python package for orchestrating microservices for AI components.
+A simple tool that connects different AI services together.
 
-## Table of Contents
-- [Installation](#installation)
-- [Development Setup](#development-setup)
-- [Docker Setup](#docker-setup)
-- [Testing](#testing)
-- [Project Structure](#project-structure)
+## What It Does
 
-## Installation
+This tool has 3 main services:
+1. Embedding Service (port 6000) - Turns text into numbers
+2. LLM Service (port 9000) - Generates text responses
+3. Mega Service (port 8000) - Connects the other services together
 
+## Quick Start
+
+1. Start all services:
 ```bash
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install package
-pip install -e .
+docker-compose up
 ```
+
+2. Wait until you see "Application startup complete" messages
+
+## Testing the Services
+
+You can test each service with these commands:
+
+### 1. Test Embedding Service
+```bash
+curl -X POST http://localhost:6000/v1/embeddings \
+  -H "Content-Type: application/json" \
+  -d '{"model": "text-embedding-ada-002", "messages": "Hello, world!"}'
+```
+
+### 2. Test LLM Service
+```bash
+curl -X POST http://localhost:9000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role": "user", "content": "Hello"}],
+    "model": "test-model"
+  }'
+```
+
+### 3. Test Mega Service
+```bash
+curl -X POST http://localhost:8000/v1/example-service \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role": "user", "content": "Hello"}],
+    "model": "test-model"
+  }'
+```
+
+## Check Service Status
+
+Open these links in your browser:
+- http://localhost:6000/ - See Embedding Service info
+- http://localhost:9000/ - See LLM Service info
+- http://localhost:8000/ - See Mega Service info
+
+## Stopping Services
+
+When you're done:
+```bash
+docker-compose down
+```
+
+
 
 ## Development Setup
 
@@ -80,30 +125,9 @@ LLM_SERVICE_HOST_IP=llm
 LLM_SERVICE_PORT=9000
 ```
 
-## Project Structure
-```
-opea-comps/
-├── src/
-│   └── comps/
-│       ├── __init__.py
-│       ├── __main__.py
-│       └── service.py
-├── tests/
-│   └── test_service.py
-├── Dockerfile
-├── docker-compose.yml
-├── docker-compose.dev.yml
-├── .dockerignore
-└── pyproject.toml
-```
-
 ## Testing
 
 ```bash
 # Run tests
 python tests/test_service.py
 ```
-
-## License
-
-[Add your license information here] 
