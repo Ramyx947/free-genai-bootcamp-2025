@@ -54,4 +54,19 @@ instance/
 # Testing
 .coverage
 htmlcov/
-.pytest_cache/ 
+.pytest_cache/
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+.env
+.venvScripts/
+.venvScriptsactivate
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover 
