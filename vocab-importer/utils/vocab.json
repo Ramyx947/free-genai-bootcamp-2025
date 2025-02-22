@@ -1,0 +1,23 @@
+[
+    {
+      "group": "Basic Greetings",
+      "words": ["hello", "hi", "goodbye", "bye"]
+    },
+    {
+      "group": "Numbers",
+      "words": ["one", "two", "three", "four"]
+    },
+    {
+      "group": "Colors",
+      "words": ["red", "blue", "green", "yellow"]
+    },
+    {
+      "group": "Common Phrases",
+      "words": ["thank you", "please", "excuse me", "sorry"]
+    },
+    {
+      "group": "Days of the Week",
+      "words": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    }
+  ]
+  
