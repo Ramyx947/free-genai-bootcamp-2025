@@ -1,0 +1,67 @@
+# CodeRabbit Configuration
+language: "en-US"
+
+# Review settings
+reviews:
+  profile: "chill"
+  auto_review:
+    enabled: true
+    base_branches: ["main"]
+    ignore_title_keywords:
+      - "^docs:"
+      - "^chore:"
+    labels:
+      - "no-review"
+      - "dependencies"
+
+  # Path filters for file types to review
+  path_filters:
+    - "**/*.py"
+    - "**/*.ts"
+    - "**/*.tsx"
+    - "**/*.js"
+    - "**/*.jsx"
+
+  # Path-specific instructions
+  path_instructions:
+    - path: "backend-flask/**"
+      instructions: |
+        Follow PEP 8 style guide, use Flask application factory pattern,
+        implement proper error handling, use environment variables,
+        write docstrings, ensure test coverage.
+
+    - path: "opea-comps/**"
+      instructions: |
+        Follow PEP 8 style guide, document API parameters and responses,
+        handle API errors gracefully, use environment variables,
+        write unit tests.
+
+    - path: "frontend-react/**"
+      instructions: |
+        Follow TypeScript best practices, use proper component organization,
+        implement error boundaries, write unit tests,
+        follow React hooks guidelines, manage state properly.
+
+# Chat settings
+chat:
+  auto_reply: true
+  integrations:
+    github:
+      enabled: true
+
+# Knowledge base settings
+knowledge_base:
+  include_paths:
+    - "docs/**"
+    - "README.md"
+    - "**/README.md"
+  exclude_paths:
+    - "**/node_modules/**"
+    - "**/__pycache__/**"
+    - "**/dist/**"
+    - "**/build/**"
+
+# Code generation settings
+code_generation:
+  enabled: true
+  docstrings: true 
