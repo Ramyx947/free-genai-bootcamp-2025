@@ -1,8 +1,8 @@
-from unittest.mock import MagicMock, patch
 import json
+from unittest.mock import MagicMock, patch
+
 import pytest
 from fastapi.testclient import TestClient
-
 from vocab_importer.main import generate_vocab_with_openai
 from vocab_importer.src.main import create_app
 
@@ -131,25 +131,18 @@ def test_generate_vocab_with_invalid_json(mock_create):
 async def test_export_vocabulary():
     app = create_app()
     client = TestClient(app)
-    
+
     # Mock the backend service response
-    mock_data = {
-        "groups": [
-            {
-                "group": "Test Group",
-                "words": ["test1", "test2"]
-            }
-        ]
-    }
-    
-    with patch('src.services.backend_service.get_vocabulary') as mock_get:
+    mock_data = {"groups": [{"group": "Test Group", "words": ["test1", "test2"]}]}
+
+    with patch("src.services.backend_service.get_vocabulary") as mock_get:
         mock_get.return_value = mock_data
         response = client.get("/export")
-        
+
         assert response.status_code == 200
-        assert response.headers['content-type'] == 'application/json'
-        assert 'vocabulary_export_' in response.headers['content-disposition']
-        
+        assert response.headers["content-type"] == "application/json"
+        assert "vocabulary_export_" in response.headers["content-disposition"]
+
         # Verify content
         content = json.loads(response.content)
         assert content == mock_data
