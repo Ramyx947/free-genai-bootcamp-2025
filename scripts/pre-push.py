@@ -36,7 +36,7 @@ def check_poetry_installation() -> None:
     except subprocess.CalledProcessError as e:
         raise PrePushError(f"Poetry installation is broken: {e.stderr.decode()}")
 
-def validate_python_project(project_path: Path) -> bool:
+def validate_python_project(project_path: Path, skip_tests: bool = False) -> bool:
     """Validate a Python project with formatting and tests."""
     try:
         if not project_path.exists():
@@ -59,23 +59,27 @@ def validate_python_project(project_path: Path) -> bool:
             )
 
         # Run checks
-        for check in [
+        checks = [
             ['poetry', 'run', 'black', '.', '--check'],
-            ['poetry', 'run', 'isort', '.', '--check-only'],
-            ['poetry', 'run', 'pytest']
-        ]:
+            ['poetry', 'run', 'isort', '.', '--check-only']
+        ]
+        
+        if not skip_tests:
+            checks.append(['poetry', 'run', 'pytest'])
+
+        for check in checks:
             try:
                 subprocess.run(check, cwd=project_path, check=True, capture_output=True)
             except subprocess.CalledProcessError as e:
                 raise PrePushError(
                     f"'{' '.join(check)}' failed:\n{e.stderr.decode()}"
-                )
+                ) from e
 
         logger.info(f"✅ {project_path.name} validation passed")
         return True
 
     except Exception as e:
-        raise PrePushError(f"Error in {project_path.name}: {str(e)}")
+        raise PrePushError(f"Error in {project_path.name}: {str(e)}") from e
 
 def main(args: Optional[List[str]] = None) -> int:
     """Main function for pre-push checks."""
@@ -123,7 +127,7 @@ def main(args: Optional[List[str]] = None) -> int:
             if not changed_dirs or project_name in changed_dirs:
                 project_path = repo_root / project_name
                 try:
-                    validate_python_project(project_path)
+                    validate_python_project(project_path, skip_tests=parsed_args.skip_tests)
                 except PrePushError as e:
                     logger.error(f"❌ {project_name} validation failed: {str(e)}")
                     return 1

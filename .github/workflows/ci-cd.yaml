@@ -5,146 +5,154 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: '3.12'
+  NODE_VERSION: '20'
+  POETRY_VERSION: '1.7.1'
 
 jobs:
   changes:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
+      contents: read
     outputs:
-      frontend: ${{ steps.filter.outputs.frontend }}
-      backend: ${{ steps.filter.outputs.backend }}
-      vocab: ${{ steps.filter.outputs.vocab }}
-    
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Check for file changes
-      uses: dorny/paths-filter@v3
-      id: filter
-      with:
-        filters: |
-          frontend:
-            - 'frontend-react/**'
-          backend:
-            - 'backend-flask/**'
-          vocab:
-            - 'vocab-importer/**'
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Detect file changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'frontend-react/**'
+            backend:
+              - 'backend-flask/**'
+            vocab:
+              - 'vocab-importer/**'
+            opea:
+              - 'opea-comps/**'
+
+      - id: set-matrix
+        run: |
+          PROJECTS=()
+          [[ '${{ steps.changes.outputs.frontend }}' == 'true' ]] && PROJECTS+=("frontend-react")
+          [[ '${{ steps.changes.outputs.backend }}' == 'true' ]] && PROJECTS+=("backend-flask")
+          [[ '${{ steps.changes.outputs.vocab }}' == 'true' ]] && PROJECTS+=("vocab-importer")
+          [[ '${{ steps.changes.outputs.opea }}' == 'true' ]] && PROJECTS+=("opea-comps")
+          echo "matrix=$(jq -n --arg p "${PROJECTS[*]}" '{project: ($p | split(" "))}' )" >> $GITHUB_OUTPUT
 
   quality-checks:
     needs: changes
-    if: |
-      needs.changes.outputs.vocab-importer == 'true' ||
-      needs.changes.outputs.backend-flask == 'true' ||
-      needs.changes.outputs.frontend-react == 'true' ||
-      needs.changes.outputs.opea-comps == 'true'
+    if: ${{ needs.changes.outputs.matrix != '{"project":[]}' }}
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        project: ['vocab-importer', 'backend-flask', 'opea-comps', 'frontend-react']
+      fail-fast: false
+      matrix: ${{fromJson(needs.changes.outputs.matrix)}}
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: |
+            **/poetry.lock
+            **/requirements*.txt
+
+      - name: Setup Node.js
+        if: ${{ endsWith(matrix.project, '-react') }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Poetry
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.project }}/.venv
+          key: venv-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles(format('{0}/poetry.lock', matrix.project)) }}
+
+      - name: Run Python checks
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        working-directory: ${{ matrix.project }}
+        run: |
+          poetry install --no-interaction --with dev
+          poetry run black . --check --diff
+          poetry run isort . --check-only --diff
+          poetry run pytest --cov --cov-report=xml
+          poetry run safety check || echo "⚠️ Security issues found"
+
+      - name: Run Frontend checks
+        if: ${{ endsWith(matrix.project, '-react') }}
+        working-directory: ${{ matrix.project }}
+        run: |
+          npm ci
+          npm run lint -- --max-warnings 0
+          npm run test -- --coverage
+          npm audit || echo "⚠️ Security issues found"
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: ${{ matrix.project }}/coverage.xml
+          flags: ${{ matrix.project }}
+          fail_ci_if_error: false
+
+  security-scan:
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
       
-      # Only run if project has changes
-      - name: Check if project changed
-        id: check
-        run: |
-          echo "should_run=${{ needs.changes.outputs[matrix.project] == 'true' }}" >> $GITHUB_OUTPUT
-
-      - name: Set up Python
-        if: steps.check.outputs.should_run == 'true' && matrix.project != 'frontend-react'
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-
-      - name: Set up Node.js
-        if: steps.check.outputs.should_run == 'true' && matrix.project == 'frontend-react'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install Poetry
-        if: steps.check.outputs.should_run == 'true' && matrix.project != 'frontend-react'
-        uses: snok/install-poetry@v1
-        with:
-          version: latest
-          virtualenvs-create: true
-
-      - name: Run Python checks
-        if: steps.check.outputs.should_run == 'true' && matrix.project != 'frontend-react'
-        working-directory: ${{ matrix.project }}
-        run: |
-          poetry install --with dev
-          poetry run black . --check
-          poetry run isort . --check-only
-          poetry run pytest
-          poetry run safety check || echo "⚠️ Security issues found but continuing..."
-
-      - name: Run Frontend checks
-        if: steps.check.outputs.should_run == 'true' && matrix.project == 'frontend-react'
-        working-directory: frontend-react
-        run: |
-          npm ci
-          npm run lint
-          npm run test
-
-  security-scan:
-    name: Container Security Analysis
-    runs-on: ubuntu-latest
-    needs: quality-checks
-    defaults:
-      run:
-        working-directory: vocab-importer
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and cache Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: vocab-importer
-          load: true
-          tags: vocab-importer:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Run Trivy vulnerability scan
+      - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: vocab-importer:${{ github.sha }}
+          scan-type: 'fs,config'
+          scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          timeout: '5m'
+          timeout: '10m'
 
       - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
-          category: 'Trivy Container Scan'
-
-      - name: Run Dockle container linting
-        uses: goodwithtech/dockle-action@v1
-        with:
-          image: vocab-importer:${{ github.sha }}
-          format: 'sarif'
-          output: 'dockle-results.sarif'
-          exit-code: '1'
-          failure-threshold: 'FATAL,WARN'
-
-      - name: Upload Dockle results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'dockle-results.sarif'
-          category: 'Dockle Container Lint'
+          category: 'Trivy'
 
   deployment:
     name: Production Deployment

@@ -3,6 +3,8 @@ import json
 from typing import Dict, Any, List
 import logging
 from ..schemas.vocabulary import VocabularyImport, VocabularyGroup
+import csv
+from io import StringIO
 
 logger = logging.getLogger(__name__)
 
@@ -46,18 +48,10 @@ async def process_file(file: UploadFile) -> Dict[str, List[Dict[str, Any]]]:
             
         elif file.content_type == 'text/csv':
             # Process CSV - assume group,word format
-            lines = content.decode().splitlines()
-            groups = {}
-            
-            for line in lines[1:]:  # Skip header
-                if ',' in line:
-                    group, word = line.split(',', 1)
-                    groups.setdefault(group.strip(), []).append(word.strip())
-            
             return {
                 "groups": [
                     {"group": group, "words": words}
-                    for group, words in groups.items()
+                    for group, words in process_csv_content(content).items()
                 ]
             }
             
@@ -76,4 +70,34 @@ async def process_file(file: UploadFile) -> Dict[str, List[Dict[str, Any]]]:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"File processing error: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail="File processing failed") 
+        raise HTTPException(status_code=500, detail="File processing failed")
+
+def process_csv_content(content: bytes) -> Dict[str, List[str]]:
+    """Process CSV content with proper validation and error handling."""
+    lines = content.decode().splitlines()
+    if not lines:
+        raise ValueError("Empty CSV file")
+
+    groups = {}
+    reader = csv.reader(StringIO('\n'.join(lines)))
+    
+    header = next(reader, None)
+    if not header or len(header) != 2 or header != ['group', 'word']:
+        raise ValueError("Invalid CSV format. Expected header: group,word")
+
+    for row_num, row in enumerate(reader, start=2):
+        if not row:  # Skip empty lines
+            continue
+        if len(row) != 2:
+            raise ValueError(f"Invalid row format at line {row_num}: {','.join(row)}")
+        
+        group, word = row
+        group = group.strip()
+        word = word.strip()
+        
+        if not group or not word:
+            raise ValueError(f"Empty group or word at line {row_num}")
+            
+        groups.setdefault(group, []).append(word)
+
+    return groups 
