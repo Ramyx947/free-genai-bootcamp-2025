@@ -1,24 +1,43 @@
-# Romanian Learning App - Frontend
+# Romanian Learning App - Frontend 🎨
 
-## Quick Start
+## Quick Start 🚀
 
-### Local Development
 ```bash
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
-```
-
-### Docker Development
-```bash
-# Start all services
+# Start everything
 docker compose up
 
-# Start only frontend
+# Just frontend
 docker compose up frontend
 ```
+
+## Main Features 🌟
+
+- Learn Romanian words
+- Make word groups
+- Import vocabulary files
+- Track your progress
+
+## Parts That Help You 🤝
+
+- **Word Groups**: Make and manage word lists
+- **Import Tool**: Add words from files
+- **Progress View**: See how you're doing
+
+## Testing 🧪
+
+```bash
+# Run tests
+npm test
+
+# Watch mode
+npm test -- --watch
+```
+
+## Need Help? 🆘
+
+1. Check the health page: http://localhost:5173/health
+2. Look at the logs: `docker compose logs frontend`
+3. Ask for help in our chat
 
 ## Project Structure
 ```
@@ -48,18 +67,6 @@ src/
 - `npm run build` - Build for production
 - `npm test` - Run tests
 - `npm run lint` - Check code style
-
-## Testing
-```bash
-# Run all tests
-npm test
-
-# With coverage
-npm test -- --coverage
-
-# Single test file
-npm test -- src/components/__tests__/YourComponent.test.tsx
-```
 
 ## Error Handling
 ```typescript

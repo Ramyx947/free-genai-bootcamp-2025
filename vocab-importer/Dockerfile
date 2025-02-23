@@ -4,28 +4,25 @@ FROM python:3.12-slim as builder
 WORKDIR /app
 
 # Install poetry
-RUN pip install --no-cache-dir poetry
+RUN pip install poetry
 
 # Copy only dependency files
-COPY pyproject.toml poetry.lock* ./
+COPY pyproject.toml poetry.lock ./
 
 # Install dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-root --without dev
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
 # Runtime stage
 FROM python:3.12-slim
 
-# Create non-root user
-RUN useradd -m -r -u 1001 appuser
-
 WORKDIR /app
 
 # Copy only necessary files from builder
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+COPY --from=builder /app/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY vocab_importer ./vocab_importer
+COPY src/ ./src/
 
 # Set ownership
 RUN chown -R appuser:appuser /app
@@ -43,4 +40,4 @@ ENV PYTHONUNBUFFERED=1 \
 EXPOSE ${PORT}
 
 # Run the application
-CMD ["python", "-m", "vocab_importer.main"] 
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "5001"] 

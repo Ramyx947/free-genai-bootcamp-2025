@@ -12,21 +12,10 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+.venv/
+venv/
+ENV/
+poetry.lock
 
 # Virtual Environment
 .env
@@ -45,12 +34,12 @@ myenv/
 .vscode/
 *.swp
 *.swo
+.cursor
 
 # Testing
 .coverage
-.pytest_cache/
 htmlcov/
-coverage.xml
+.pytest_cache/
 
 # Docker
 .docker/
@@ -59,3 +48,16 @@ docker-compose.override.yml
 # Logs
 *.log
 logs/
+
+# Cache
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# Local development
+local_settings.py
+db.sqlite3
+
+# Temp files
+*.tmp
+temp/

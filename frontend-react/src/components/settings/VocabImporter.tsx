@@ -3,9 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { fetchWithTimeout } from '@/api';
+import { Download } from 'lucide-react';
 
 export const VocabImporter = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,16 +39,20 @@ export const VocabImporter = () => {
   const handleImport = async () => {
     if (!file) return;
 
+    setIsLoading(true);
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const response = await fetch('http://localhost:5001/import', {
+      const response = await fetchWithTimeout('http://localhost:5001/import', {
         method: 'POST',
         body: formData,
       });
 
-      if (!response.ok) throw new Error('Import failed');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Import failed');
+      }
 
       toast({
         title: "Success",
@@ -58,28 +66,79 @@ export const VocabImporter = () => {
         description: error.message,
         variant: "destructive"
       });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      setIsExporting(true);
+      const response = await fetch('http://localhost:5001/export');
+      
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
+
+      // Get filename from response headers
+      const filename = response.headers
+        .get('content-disposition')
+        ?.split('filename=')[1] || 'vocabulary_export.json';
+
+      // Download file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      
+      toast({
+        title: "Success",
+        description: "Vocabulary exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsExporting(false);
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Import Vocabulary</CardTitle>
+        <CardTitle>Vocabulary Tools</CardTitle>
         <CardDescription>
-          Import vocabulary from JSON, TXT, CSV or PDF files
+          Import or export vocabulary files
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Input
-            type="file"
-            accept=".json,.txt,.csv,.pdf"
-            onChange={handleFileUpload}
-          />
+        <div className="flex justify-between items-center">
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Input
+              type="file"
+              accept=".json,.txt,.csv,.pdf"
+              onChange={handleFileUpload}
+            />
+          </div>
+          <Button
+            onClick={handleExport}
+            disabled={isExporting}
+            variant="outline"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Export
+          </Button>
         </div>
         {file && (
           <div className="flex items-center gap-2">
-            <Button onClick={handleImport}>
+            <Button onClick={handleImport} disabled={isLoading}>
               Import {file.name}
             </Button>
             <Button variant="outline" onClick={() => setFile(null)}>

@@ -100,18 +100,25 @@ services:
   vocab-importer:
     build: 
       context: ./vocab-importer
-      dockerfile: Dockerfile
+      target: production
     ports:
       - "5001:5001"
+      - "5001:5001/metrics"
     environment:
-      - DEVELOPMENT_MODE=false
-      - PORT=5001
-    env_file:
-      - ./vocab-importer/.env
-    volumes:
-      - ./vocab-importer/vocab_importer:/app/vocab_importer
-    networks:
-      - ai-network
+      - BACKEND_URL=http://backend:5000
+      - FRONTEND_URL=http://frontend:5173
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      backend:
+        condition: service_healthy
+    labels:
+      - "prometheus.io/scrape=true"
+      - "prometheus.io/port=5001"
+      - "prometheus.io/path=/metrics"
 
   opea-comps:
     build:
@@ -125,6 +132,22 @@ services:
       - ./opea-comps/comps:/app/comps
     networks:
       - ai-network
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - vocab-importer
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
 
 networks:
   ai-network:

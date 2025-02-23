@@ -1,0 +1,72 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv
+venv
+ENV
+poetry.lock
+
+# Virtual Environment
+.env
+.venv/
+env/
+venv/
+ENV/
+myenv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.cursor
+
+# Testing
+.coverage
+htmlcov
+.pytest_cache
+coverage.xml
+tests/
+pytest.ini
+
+# Docker
+.docker/
+docker-compose.override.yml
+Dockerfile
+.dockerignore
+
+# Documentation
+README.md
+CHANGELOG.md
+docs/
+*.md
+
+# Development
+*.log
+local_settings.py
+db.sqlite3
+
+# Poetry
+poetry.lock
+poetry.toml
+
+# Cache
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Misc
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+temp 
