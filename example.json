@@ -1,0 +1,18 @@
+{
+  "groups": [
+    {
+      "group": "Basic Greetings",
+      "words": [
+        ["hello", "salut"],
+        ["goodbye", "la revedere"]
+      ]
+    },
+    {
+      "group": "Numbers",
+      "words": [
+        ["one", "unu"],
+        ["two", "doi"]
+      ]
+    }
+  ]
+} 

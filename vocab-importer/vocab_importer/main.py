@@ -1,13 +1,7 @@
-# Standard library imports
-import csv
-import io
 import json
 import os
-from typing import List, Optional
+from typing import Optional
 
-import PyPDF2
-
-# Third-party imports
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
@@ -93,86 +87,12 @@ async def generate_vocab(prompt: Optional[str] = Form(None)):
     return RedirectResponse(url="/", status_code=303)
 
 
-def parse_file_content(content: bytes, file_type: str) -> List[dict]:
-    """Parse different file formats into vocabulary data."""
-    if file_type == "application/json":
-        return json.loads(content.decode())
-
-    vocab_data = []
-    if file_type == "text/plain":
-        # Parse TXT - assume tab or comma separated: word,translation
-        lines = content.decode().splitlines()
-        for line in lines:
-            if "," in line:
-                word, translation = line.split(",", 1)
-            elif "\t" in line:
-                word, translation = line.split("\t", 1)
-            else:
-                continue
-            vocab_data.append(
-                {
-                    "group": "Imported Words",
-                    "words": [word.strip(), translation.strip()],
-                }
-            )
-
-    elif file_type == "text/csv":
-        # Parse CSV
-        csv_file = io.StringIO(content.decode())
-        reader = csv.DictReader(csv_file)
-        current_group = None
-        words = []
-
-        for row in reader:
-            if "group" in row and row["group"]:
-                if current_group and words:
-                    vocab_data.append({"group": current_group, "words": words})
-                current_group = row["group"]
-                words = []
-            if "word" in row and "translation" in row:
-                words.append([row["word"].strip(), row["translation"].strip()])
-
-        if current_group and words:
-            vocab_data.append({"group": current_group, "words": words})
-
-    elif file_type == "application/pdf":
-        # Parse PDF
-        pdf_file = io.BytesIO(content)
-        reader = PyPDF2.PdfReader(pdf_file)
-        text = ""
-        for page in reader.pages:
-            text += page.extract_text()
-
-        # Split by lines and parse each line
-        lines = text.splitlines()
-        current_group = "PDF Import"
-        words = []
-
-        for line in lines:
-            if ":" in line:  # Assume group headers end with colon
-                if current_group and words:
-                    vocab_data.append({"group": current_group, "words": words})
-                current_group = line.strip(":")
-                words = []
-            elif "," in line or "\t" in line:
-                if "," in line:
-                    word, translation = line.split(",", 1)
-                else:
-                    word, translation = line.split("\t", 1)
-                words.append([word.strip(), translation.strip()])
-
-        if current_group and words:
-            vocab_data.append({"group": current_group, "words": words})
-
-    return {"groups": vocab_data}
-
-
 @app.post("/import")
-async def import_vocab(request: Request, file: UploadFile = File(...)):
+async def import_vocab(file: UploadFile = File(...)):
     try:
         content = await file.read()
-        result = parse_file_content(content, file.content_type)
-        vocab_data.extend(result.get("groups", []))
+        data = json.loads(content.decode())
+        vocab_data.extend(data.get("groups", []))
         return RedirectResponse(url="/", status_code=303)
     except Exception as e:
         return JSONResponse(

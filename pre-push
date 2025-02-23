@@ -1,0 +1,50 @@
+#!/bin/bash
+
+echo "Running pre-push checks..."
+
+# Check vocab-importer
+echo "Checking vocab-importer..."
+cd vocab-importer || exit 1
+
+echo "Installing dependencies..."
+poetry install
+
+echo "Running formatters..."
+poetry run black .
+poetry run isort .
+
+echo "Running tests..."
+poetry run pytest
+
+if [ $? -ne 0 ]; then
+    echo "Tests failed!"
+    exit 1
+fi
+
+# Return to original directory
+cd ..
+
+# Check backend-flask
+echo "Checking backend-flask..."
+cd backend-flask || exit 1
+
+echo "Installing dependencies..."
+poetry install
+
+if [ $? -ne 0 ]; then
+    echo "Failed to install backend dependencies!"
+    exit 1
+fi
+
+echo "Running tests..."
+poetry run pytest
+
+if [ $? -ne 0 ]; then
+    echo "Backend tests failed!"
+    exit 1
+fi
+
+# Return to original directory
+cd ..
+
+exit 0 

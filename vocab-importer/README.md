@@ -1,6 +1,6 @@
 # Vocab Importer
 
-An internal tool to help manage vocabulary for a language learning app. This app uses FastHTML and OpenAI's API to let you:
+An internal tool to help manage vocabulary for a language learning app. This app uses FastAPI and OpenAI's API to let you:
 
 - **Generate Vocabulary:** Create word groups using OpenAI's ChatCompletion API with the `gpt-4o-mini` model.
 - **Import Vocabulary:** Upload a JSON file to add new words.
@@ -9,26 +9,34 @@ An internal tool to help manage vocabulary for a language learning app. This app
 ## Requirements
 
 - Python 3.7 or higher
-- FastHTML library
+- FastAPI framework
+- Uvicorn ASGI server
 - OpenAI Python library
 
 ## Installation
 
-1. **Install FastHTML:**
+1. **Install FastAPI:**
 
    ```bash
-   pip install python-fasthtml
+   pip install fastapi
    ```
 
 
-2. **Install OpenAI:**
+2. **Install Uvicorn:**
+
+   ```bash
+   pip install uvicorn
+   ```
+
+
+3. **Install OpenAI:**
 
    ```bash
    pip install openai
    ```
 
 
-3. **Set Up Environment Variables:**
+4. **Set Up Environment Variables:**
 
    - **Create a `.env` File:** This file holds sensitive info like API keys. Don't share it publicly.
    - **Create a `.env.example` File:** List required environment variables without sensitive data. Share this file to help others set up their environment.
@@ -43,10 +51,10 @@ An internal tool to help manage vocabulary for a language learning app. This app
 
    **Note:** Add `.env` to your `.gitignore` file to keep it private.
 
-4. **Run the App:**
+5. **Run the App:**
 
    ```bash
-   python main.py
+   uvicorn vocab_importer.main:app --reload --port 5001
    ```
 
 
