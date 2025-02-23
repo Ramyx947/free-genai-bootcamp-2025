@@ -8,10 +8,10 @@ reviews:
   auto_review:
     enabled: true
     base_branches: ["main"]
-    ignore_title_patterns:
+    ignore_title_keywords:
       - "^docs:"
       - "^chore:"
-    ignore_labels:
+    labels:
       - "no-review"
       - "dependencies"
 
