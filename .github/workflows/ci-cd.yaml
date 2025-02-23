@@ -48,12 +48,23 @@ jobs:
 
       - id: set-matrix
         run: |
+          # Initialize projects array
           PROJECTS=()
+          
+          # Add projects if they have changes
           [[ '${{ steps.changes.outputs.frontend }}' == 'true' ]] && PROJECTS+=("frontend-react")
           [[ '${{ steps.changes.outputs.backend }}' == 'true' ]] && PROJECTS+=("backend-flask")
           [[ '${{ steps.changes.outputs.vocab }}' == 'true' ]] && PROJECTS+=("vocab-importer")
           [[ '${{ steps.changes.outputs.opea }}' == 'true' ]] && PROJECTS+=("opea-comps")
-          echo "matrix=$(jq -n --arg p "${PROJECTS[*]}" '{project: ($p | split(" "))}' )" >> $GITHUB_OUTPUT
+          
+          # Create JSON with default empty array if no projects changed
+          if [ ${#PROJECTS[@]} -eq 0 ]; then
+            echo "matrix={\"project\":[]}" >> $GITHUB_OUTPUT
+          else
+            # Create JSON with changed projects
+            JSON_ARRAY=$(printf '%s\n' "${PROJECTS[@]}" | jq -R . | jq -s .)
+            echo "matrix={\"project\":$JSON_ARRAY}" >> $GITHUB_OUTPUT
+          fi
 
   quality-checks:
     needs: changes
