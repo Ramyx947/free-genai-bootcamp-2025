@@ -57,13 +57,13 @@ jobs:
           [[ '${{ steps.changes.outputs.vocab }}' == 'true' ]] && PROJECTS+=("vocab-importer")
           [[ '${{ steps.changes.outputs.opea }}' == 'true' ]] && PROJECTS+=("opea-comps")
           
-          # Create JSON with default empty array if no projects changed
+          # Create matrix output in proper JSON format
           if [ ${#PROJECTS[@]} -eq 0 ]; then
-            echo "matrix={\"project\":[]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"project\":[]}" >> "$GITHUB_OUTPUT"
           else
-            # Create JSON with changed projects
-            JSON_ARRAY=$(printf '%s\n' "${PROJECTS[@]}" | jq -R . | jq -s .)
-            echo "matrix={\"project\":$JSON_ARRAY}" >> $GITHUB_OUTPUT
+            # Create properly formatted JSON array without trailing comma
+            JSON_ARRAY=$(IFS=,; echo "${PROJECTS[*]}" | jq -R 'split(",")' | jq -c .)
+            echo "matrix={\"project\":$JSON_ARRAY}" >> "$GITHUB_OUTPUT"
           fi
 
   quality-checks:
