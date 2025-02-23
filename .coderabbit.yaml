@@ -1,0 +1,86 @@
+# CodeRabbit Configuration
+language: "en-US"
+
+# Review settings
+reviews:
+  # General review profile
+  profile: "chill"
+  auto_review:
+    enabled: true
+    base_branches: ["main"]
+    ignore_title_patterns:
+      - "^docs:"
+      - "^chore:"
+    ignore_labels:
+      - "no-review"
+      - "dependencies"
+
+  # Path-specific configurations
+  path_patterns:
+    # Python backend configurations
+    - path: "backend-flask/**"
+      reviewers:
+        - type: "coderabbit"
+      language: "python"
+      guidelines: |
+        - Follow PEP 8 style guide
+        - Use Flask application factory pattern
+        - Implement proper error handling
+        - Use environment variables for configuration
+        - Write docstrings for functions and classes
+        - Ensure test coverage for new code
+
+    # OpenAI components configurations
+    - path: "opea-comps/**"
+      reviewers:
+        - type: "coderabbit"
+      language: "python"
+      guidelines: |
+        - Follow PEP 8 style guide
+        - Document API parameters and responses
+        - Handle API errors gracefully
+        - Use environment variables for API keys
+        - Write unit tests for components
+
+    # React frontend configurations
+    - path: "frontend-react/**"
+      reviewers:
+        - type: "coderabbit"
+      language: "typescript"
+      guidelines: |
+        - Follow TypeScript best practices
+        - Use proper component organization
+        - Implement proper error boundaries
+        - Write unit tests for components
+        - Follow React hooks guidelines
+        - Use proper state management
+
+# Chat settings
+chat:
+  auto_reply: true
+  language_instructions: |
+    - Be concise and clear
+    - Provide code examples when relevant
+    - Explain the reasoning behind suggestions
+    - Reference relevant documentation
+
+# Knowledge base settings
+knowledge_base:
+  include_paths:
+    - "docs/**"
+    - "README.md"
+    - "**/README.md"
+  exclude_paths:
+    - "**/node_modules/**"
+    - "**/__pycache__/**"
+    - "**/dist/**"
+    - "**/build/**"
+
+# Code generation settings
+code_generation:
+  enabled: true
+  language_instructions: |
+    - Generate code that follows project conventions
+    - Include proper error handling
+    - Add comments for complex logic
+    - Follow testing patterns established in the project 
