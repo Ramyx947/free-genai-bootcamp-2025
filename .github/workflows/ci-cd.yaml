@@ -2,43 +2,34 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - 'vocab-importer/**'
-      - 'backend-flask/**'
-      - 'frontend-react/**'
-      - 'opea-comps/**'
-      - '.github/workflows/**'
+    branches: [ main, develop ]
   pull_request:
-    paths:
-      - 'vocab-importer/**'
-      - 'backend-flask/**'
-      - 'frontend-react/**'
-      - 'opea-comps/**'
-      - '.github/workflows/**'
+    branches: [ main, develop ]
 
 jobs:
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     outputs:
-      vocab-importer: ${{ steps.filter.outputs.vocab-importer }}
-      backend-flask: ${{ steps.filter.outputs.backend-flask }}
-      frontend-react: ${{ steps.filter.outputs.frontend-react }}
-      opea-comps: ${{ steps.filter.outputs.opea-comps }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+      vocab: ${{ steps.filter.outputs.vocab }}
+    
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            vocab-importer:
-              - 'vocab-importer/**'
-            backend-flask:
-              - 'backend-flask/**'
-            frontend-react:
-              - 'frontend-react/**'
-            opea-comps:
-              - 'opea-comps/**'
+    - uses: actions/checkout@v4
+    
+    - name: Check for file changes
+      uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        filters: |
+          frontend:
+            - 'frontend-react/**'
+          backend:
+            - 'backend-flask/**'
+          vocab:
+            - 'vocab-importer/**'
 
   quality-checks:
     needs: changes

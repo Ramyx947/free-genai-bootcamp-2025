@@ -12,9 +12,22 @@ export const VocabImporter = () => {
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB in bytes
+  
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        title: "File too large",
+        description: "Please upload a file smaller than 10MB",
+        variant: "destructive"
+      });
+      e.target.value = ''; // Clear input
+      return;
+    }
     
     // Check file type
     const validTypes = [
@@ -30,6 +43,7 @@ export const VocabImporter = () => {
         description: "Please upload a .json, .txt, .csv or .pdf file",
         variant: "destructive"
       });
+      e.target.value = '';
       return;
     }
     
