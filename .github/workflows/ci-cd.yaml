@@ -168,7 +168,7 @@ jobs:
           timeout: ${{ env.TRIVY_TIMEOUT }}
 
       - name: Run Trivy vulnerability scanner (Full Report)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.17.0
         continue-on-error: true
         with:
           scan-type: 'fs'
