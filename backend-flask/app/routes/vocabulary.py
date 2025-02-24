@@ -14,3 +14,17 @@ async def generate_vocab():
     prompt = data.get("prompt") if data else None
     result = await generate_vocabulary(prompt=prompt)
     return jsonify(result)
+
+
+@vocabulary_bp.route("/", methods=["POST"])
+@handle_errors
+def create_vocabulary():
+    data = request.get_json()
+    if not data:
+        raise ValueError("No JSON data provided")
+    
+    prompt = data.get("prompt")
+    if not prompt:
+        raise ValueError("Prompt is required")
+        
+    # Rest of the function...

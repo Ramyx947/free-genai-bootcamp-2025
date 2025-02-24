@@ -158,14 +158,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner (Critical)
-        uses: aquasecurity/trivy-action@master
-        continue-on-error: true  # Don't fail the workflow
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@v0.17.0  # Pin version
         with:
           scan-type: 'fs'
-          scan-ref: '.'
-          format: 'table'  # Human readable output
-          severity: 'CRITICAL'  # Only check critical vulnerabilities
+          severity: ${{ env.TRIVY_SEVERITY }}
+          format: ${{ env.TRIVY_FORMAT }}
+          output: ${{ env.TRIVY_OUTPUT }}
           timeout: ${{ env.TRIVY_TIMEOUT }}
 
       - name: Run Trivy vulnerability scanner (Full Report)

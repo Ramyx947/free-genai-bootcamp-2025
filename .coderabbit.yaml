@@ -78,4 +78,8 @@ code_generation:
 
 code_suggestions:
   autofix: false
-  validation_level: strict 
+  validation_level: strict
+
+# Add supported configuration
+review_comment_style: detailed
+max_comments_per_review: 50 
