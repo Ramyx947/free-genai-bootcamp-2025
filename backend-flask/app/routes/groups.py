@@ -19,19 +19,15 @@ def get_groups():
 @groups_bp.route("/", methods=["POST"])
 @handle_errors
 def create_group():
-    data = request.get_json()
+    data = validate_request_data(request)
     if not data:
         raise ValueError("No JSON data provided")
-        
+
     name = data.get("name")
     if not name:
         raise ValueError("Group name is required")
-        
-    group = Group(
-        name=name,
-        description=data.get("description", ""),
-        word_count=0
-    )
+
+    group = Group(name=name, description=data.get("description", ""), word_count=0)
     db.session.add(group)
     db.session.commit()
 

@@ -8,13 +8,14 @@ from app.models import Group, Word
 @pytest.fixture
 def app():
     app = create_app()
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-    app.config["TESTING"] = True
+    app.config.update(
+        {"TESTING": True, "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:"}
+    )
 
     with app.app_context():
-        db.create_all()
+        db.create_all()  # Create tables before tests
         yield app
-        db.drop_all()
+        db.drop_all()  # Clean up after tests
 
 
 @pytest.fixture
@@ -30,7 +31,12 @@ def runner(app):
 
 @pytest.fixture
 def sample_data(app):
+    """Create sample data for tests."""
     with app.app_context():
+        # Create tables
+        db.create_all()
+
+        # Add sample word
         word = Word(
             romanian="măr",
             english="apple",
@@ -38,11 +44,21 @@ def sample_data(app):
             part_of_speech="noun",
             parts=["fruit"],
         )
-        db.session.add(word)
 
-        group = Group(name="Test Group", description="Test Description", word_count=0)
+        # Add sample group
+        group = Group(
+            name="Fruits", description="Romanian fruit vocabulary", word_count=1
+        )
+
+        db.session.add(word)
         db.session.add(group)
         db.session.commit()
+
+        yield  # This allows the test to run
+
+        # Cleanup
+        db.session.remove()
+        db.drop_all()
 
 
 @pytest.fixture

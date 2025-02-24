@@ -22,9 +22,9 @@ def create_vocabulary():
     data = request.get_json()
     if not data:
         raise ValueError("No JSON data provided")
-    
+
     prompt = data.get("prompt")
     if not prompt:
         raise ValueError("Prompt is required")
-        
+
     # Rest of the function...

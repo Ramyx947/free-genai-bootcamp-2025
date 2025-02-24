@@ -1,8 +1,16 @@
+"""
+Dashboard Routes
+
+Provides statistics and overview of:
+- Learning progress
+- Word counts
+- Study sessions
+"""
+
 from flask import Blueprint, jsonify
 
+from ..models import Group, Word
 from ..utils.middleware import handle_errors
-from ..models.word import Word
-from ..models.group import Group
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -10,23 +18,35 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @dashboard_bp.route("/", methods=["GET"])
 @handle_errors
 def get_dashboard():
-    """Get dashboard statistics.
-    
+    """Get dashboard overview.
+
     Returns:
-        JSON: A dictionary containing:
-            - message: Success message
-            - data: Dictionary containing:
-                - total_words: Total number of words in system
-                - learned_words: Number of learned words
-                - active_groups: Number of active groups
+        JSON with:
+        - Last study session
+        - Learning progress
+        - Overall statistics
     """
-    stats = {
-        "total_words": Word.query.count(),
-        "learned_words": Word.query.filter_by(learned=True).count(),
-        "active_groups": Group.query.filter_by(active=True).count()
+    # Clear section comments
+    # Last session info
+    last_session = {"date": None, "score": 0, "duration": 0, "activity": None}
+
+    # Progress tracking
+    progress = {
+        "totalWordsLearned": Word.query.filter(Word.learned.is_(True)).count(),
+        "completionRate": 0,
+        "streak": 0,
     }
-    
-    return jsonify({
-        "message": "Dashboard data retrieved successfully",
-        "data": stats
-    })
+
+    # Overall statistics
+    stats = {
+        "totalWords": Word.query.count(),
+        "totalGroups": Group.query.count(),
+        "completedSessions": 0,
+    }
+
+    return jsonify(
+        {
+            "success": True,
+            "data": {"lastSession": last_session, "progress": progress, "stats": stats},
+        }
+    )
