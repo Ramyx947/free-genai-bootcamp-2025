@@ -3,19 +3,12 @@ swagger_config = {
     "info": {
         "title": "Romanian Language Learning API",
         "description": "API for managing vocabulary and learning sessions",
-        "version": "1.0.0"
+        "version": "1.0.0",
     },
     "basePath": "/api",
-    "schemes": [
-        "http",
-        "https"
-    ],
-    "consumes": [
-        "application/json"
-    ],
-    "produces": [
-        "application/json"
-    ],
+    "schemes": ["http", "https"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
     "paths": {
         "/dashboard": {
             "get": {
@@ -33,13 +26,13 @@ swagger_config = {
                                     "properties": {
                                         "total_words": {"type": "integer"},
                                         "learned_words": {"type": "integer"},
-                                        "active_groups": {"type": "integer"}
-                                    }
+                                        "active_groups": {"type": "integer"},
+                                    },
                                 }
-                            }
-                        }
+                            },
+                        },
                     }
-                }
+                },
             }
         },
         "/words": {
@@ -64,14 +57,14 @@ swagger_config = {
                                             "english": {"type": "string"},
                                             "pronunciation": {"type": "string"},
                                             "part_of_speech": {"type": "string"},
-                                            "parts": {"type": "string"}
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                                            "parts": {"type": "string"},
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     }
-                }
+                },
             }
         },
         "/groups": {
@@ -94,14 +87,14 @@ swagger_config = {
                                             "id": {"type": "integer"},
                                             "name": {"type": "string"},
                                             "description": {"type": "string"},
-                                            "wordCount": {"type": "integer"}
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                                            "wordCount": {"type": "integer"},
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     }
-                }
+                },
             },
             "post": {
                 "tags": ["Groups"],
@@ -116,18 +109,14 @@ swagger_config = {
                             "type": "object",
                             "properties": {
                                 "name": {"type": "string"},
-                                "description": {"type": "string"}
+                                "description": {"type": "string"},
                             },
-                            "required": ["name"]
-                        }
+                            "required": ["name"],
+                        },
                     }
                 ],
-                "responses": {
-                    "201": {
-                        "description": "Group created successfully"
-                    }
-                }
-            }
-        }
-    }
-} 
+                "responses": {"201": {"description": "Group created successfully"}},
+            },
+        },
+    },
+}

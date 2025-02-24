@@ -1,24 +1,55 @@
 [tool.poetry]
-name = "lang-portal-backend"
+name = "backend-flask"
 version = "0.1.0"
-description = "Backend API for language learning portal"
-authors = ["Ramona"]
+description = "Backend Flask service"
+authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-flask = "^3.1.0"
+flask = "^3.0.0"
 flask-jwt-extended = "^4.7.1"
 flask-cors = "^5.0.0"
 flask-limiter = "^3.10.1"
 invoke = "^2.2.0"
 flask-swagger-ui = "^4.11.1"
-
+flask-sqlalchemy = "^3.1.1"
+flask-migrate = "^4.0.5"
+vocab-importer = {path = "../vocab-importer"}
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.4"
-pytest-cov = "^6.0.0"
+pytest = "^7.4.4"
+pytest-cov = "^4.1.0"
+black = "^23.12.1"
+isort = "^5.13.2"
+flake8 = "^7.0.0"
+pytest-asyncio = "<0.25.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = """
+    --cov=app
+    --cov-report=term-missing
+    --cov-report=html
+"""
+
+[tool.poetry.scripts]
+test = "pytest:main"
+format = "black:main"
+lint = "flake8:main"
+sort = "isort:main"

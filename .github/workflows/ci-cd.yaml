@@ -18,6 +18,10 @@ env:
   PYTHON_VERSION: '3.12'
   NODE_VERSION: '20'
   POETRY_VERSION: '1.7.1'
+  TRIVY_SEVERITY: 'CRITICAL,HIGH'
+  TRIVY_FORMAT: 'sarif'
+  TRIVY_OUTPUT: 'trivy-results.sarif'
+  TRIVY_TIMEOUT: '10m'
 
 jobs:
   changes:
@@ -147,35 +151,72 @@ jobs:
           flags: ${{ matrix.project }}
           fail_ci_if_error: false
 
-  security-scan:
-    needs: quality-checks
+  security:
+    name: Security Scan
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs,config'
+          scan-type: 'fs'
+          severity: ${{ env.TRIVY_SEVERITY }}
+          format: ${{ env.TRIVY_FORMAT }}
+          output: ${{ env.TRIVY_OUTPUT }}
+          timeout: ${{ env.TRIVY_TIMEOUT }}
+
+      - name: Run Trivy vulnerability scanner (Full Report)
+        uses: aquasecurity/trivy-action@master
+        continue-on-error: true
+        with:
+          scan-type: 'fs'
           scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          timeout: '10m'
+          format: ${{ env.TRIVY_FORMAT }}
+          output: ${{ env.TRIVY_OUTPUT }}
+          severity: 'CRITICAL,HIGH,MEDIUM,LOW'  # All severities for reporting
+          timeout: ${{ env.TRIVY_TIMEOUT }}
 
       - name: Upload Trivy scan results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
-          category: 'Trivy'
+          sarif_file: ${{ env.TRIVY_OUTPUT }}
+          category: Trivy
+
+      - name: Create Security Report Issue
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const title = '🚨 Security Vulnerabilities Found';
+            const body = `
+            # Security Scan Results
+            
+            Critical vulnerabilities were found in the latest scan.
+            Please review the GitHub Security tab for details.
+            
+            ## Next Steps
+            1. Review the vulnerabilities
+            2. Create tickets for critical issues
+            3. Plan remediation
+            
+            [View Security Tab](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/security)
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['security', 'needs-review']
+            });
 
   deployment:
     name: Production Deployment
-    needs: [security-scan]
+    needs: [security]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production

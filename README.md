@@ -55,6 +55,32 @@ volumes:
 - CORS security configuration
 - Parallel builds support
 
+## CI/CD Strategy
+
+### Pipeline Overview
+Our CI/CD pipeline implements a microservices-oriented approach with:
+- Selective testing based on changes
+- Parallel matrix builds for efficiency
+- Non-blocking security scans
+- Automated deployment for main branch
+
+[View detailed CI/CD flow diagram and documentation](./docs/ci-cd-flow.md)
+
+### Key Features
+- **Change Detection**: Only test affected services
+- **Parallel Execution**: Matrix builds for faster pipelines
+- **Caching Strategy**: Poetry/npm caches for faster builds
+- **Quality Gates**:
+  - Linting (black, isort, eslint)
+  - Unit Tests (pytest, jest)
+  - Code Coverage (>80% required)
+
+### Security Standards
+- Trivy vulnerability scanning
+- Dependency auditing (npm audit, safety)
+- SARIF reporting to GitHub Security tab
+- Automated security issue creation
+
 ## Service Integration
 - Frontend ↔️ Backend API communication
 - Backend ↔️ OpenAI services coordination
@@ -74,13 +100,13 @@ For detailed documentation:
 
 ## Git Hooks Setup
 
-The project uses Git hooks to ensure code quality across all Python projects in the monorepo.
+The project uses Git hooks to ensure code quality across all microservices in the monorepo.
 
 ### Pre-Push Hook
 
 The pre-push hook automatically:
 - Runs formatting checks (black, isort)
 - Executes tests
-- Verifies each Python project in the monorepo
+- Verifies each microservice in the monorepo
 
 

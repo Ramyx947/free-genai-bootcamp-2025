@@ -1,45 +1,33 @@
-import pytest
-from datetime import datetime
-from app.models import Word, Group, WordGroup
+from app.models import Group, Word
 
-def test_word_from_db_row():
-    row = (
-        1,
-        "măr",
-        "apple",
-        "mur",
-        "noun",
-        '["fruit"]',
-        "2024-03-20T10:00:00",
-        "2024-03-20T10:00:00"
-    )
-    
-    word = Word.from_db_row(row)
-    
-    assert word.id == 1
-    assert word.romanian == "măr"
-    assert word.english == "apple"
-    assert word.pronunciation == "mur"
-    assert word.part_of_speech == "noun"
-    assert word.parts == ["fruit"]
-    assert isinstance(word.created_at, datetime)
-    assert isinstance(word.updated_at, datetime)
 
-def test_group_from_db_row():
-    row = (
-        1,
-        "Fruits",
-        "Romanian fruit vocabulary",
-        10,
-        "2024-03-20T10:00:00",
-        "2024-03-20T10:00:00"
+def test_word_to_dict():
+    """Test Word model to_dict() method matches API specs."""
+    word = Word(
+        romanian="măr",
+        english="apple",
+        pronunciation="mur",
+        part_of_speech="noun",
+        parts=["fruit"],
+        learned=False,
     )
-    
-    group = Group.from_db_row(row)
-    
-    assert group.id == 1
-    assert group.name == "Fruits"
-    assert group.description == "Romanian fruit vocabulary"
-    assert group.word_count == 10
-    assert isinstance(group.created_at, datetime)
-    assert isinstance(group.updated_at, datetime) 
+    data = word.to_dict()
+
+    # Check all required fields from API specs
+    assert data["romanian"] == "măr"
+    assert data["english"] == "apple"
+    assert data["pronunciation"] == "mur"
+    assert data["part_of_speech"] == "noun"
+    assert data["parts"] == ["fruit"]
+    assert data["learned"] is False
+    assert data["createdAt"] is None  # Not set in test
+    assert data["updatedAt"] is None  # Not set in test
+    assert data["groupIds"] == []  # No groups assigned
+
+
+def test_group_to_dict():
+    group = Group(name="Fruits", description="Romanian fruit vocabulary", word_count=10)
+    data = group.to_dict()
+    assert data["name"] == "Fruits"
+    assert data["description"] == "Romanian fruit vocabulary"
+    assert data["wordCount"] == 10
