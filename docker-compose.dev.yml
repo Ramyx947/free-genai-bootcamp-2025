@@ -4,7 +4,7 @@ services:
   frontend:
     build: 
       context: ./frontend-react
-      dockerfile: Dockerfile.dev
+      target: development
     ports:
       - "5173:5173"
     volumes:
@@ -23,7 +23,7 @@ services:
   backend:
     build:
       context: ./backend-flask
-      dockerfile: Dockerfile
+      target: development
     ports:
       - "5000:5000"
     volumes:
@@ -80,4 +80,13 @@ services:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
       - UVICORN_RELOAD=true
-    command: poetry run uvicorn comps.__main__:app --host 0.0.0.0 --port 8000 --reload 
+    command: poetry run uvicorn comps.__main__:app --host 0.0.0.0 --port 8000 --reload
+
+  vocab-importer:
+    build: 
+      context: ./vocab-importer
+      target: development
+    volumes:
+      - ./vocab-importer:/app
+      - /app/.venv
+    command: poetry run uvicorn src.main:app --reload --host 0.0.0.0 

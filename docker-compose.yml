@@ -5,7 +5,7 @@ services:
   frontend:
     build:
       context: ./frontend-react
-      target: development
+      target: production
     ports:
       - "5173:5173"
     volumes:
@@ -27,7 +27,7 @@ services:
   backend:
     build:
       context: ./backend-flask
-      target: development
+      target: production
     ports:
       - "5000:5000"
     volumes:

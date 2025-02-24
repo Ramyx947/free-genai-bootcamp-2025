@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
     paths-ignore:
       - '**.md'
       - 'docs/**'
@@ -186,5 +186,5 @@ jobs:
     steps:
       - name: Deployment preparation
         run: |
-          echo "🚀 Preparing to deploy vocab-importer version ${{ github.sha }}"
+          echo "🚀 Preparing to deploy version ${{ github.sha }}"
           # Add actual deployment steps here when needed 
