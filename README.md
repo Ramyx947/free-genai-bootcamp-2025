@@ -71,3 +71,16 @@ For detailed documentation:
 - [Frontend Documentation](./frontend-react/README.md)
 - [Backend Documentation](./backend-flask/README.md)
 - [OpenAI Components](./opea-comps/README.md)
+
+## Git Hooks Setup
+
+The project uses Git hooks to ensure code quality across all Python projects in the monorepo.
+
+### Pre-Push Hook
+
+The pre-push hook automatically:
+- Runs formatting checks (black, isort)
+- Executes tests
+- Verifies each Python project in the monorepo
+
+

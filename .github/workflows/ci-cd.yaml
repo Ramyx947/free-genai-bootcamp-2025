@@ -1,0 +1,190 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: '3.12'
+  NODE_VERSION: '20'
+  POETRY_VERSION: '1.7.1'
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Detect file changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'frontend-react/**'
+            backend:
+              - 'backend-flask/**'
+            vocab:
+              - 'vocab-importer/**'
+            opea:
+              - 'opea-comps/**'
+
+      - id: set-matrix
+        run: |
+          # Initialize projects array
+          PROJECTS=()
+          
+          # Add projects if they have changes
+          [[ '${{ steps.changes.outputs.frontend }}' == 'true' ]] && PROJECTS+=("frontend-react")
+          [[ '${{ steps.changes.outputs.backend }}' == 'true' ]] && PROJECTS+=("backend-flask")
+          [[ '${{ steps.changes.outputs.vocab }}' == 'true' ]] && PROJECTS+=("vocab-importer")
+          [[ '${{ steps.changes.outputs.opea }}' == 'true' ]] && PROJECTS+=("opea-comps")
+          
+          # Create matrix output in proper JSON format
+          if [ ${#PROJECTS[@]} -eq 0 ]; then
+            echo "matrix={\"project\":[]}" >> "$GITHUB_OUTPUT"
+          else
+            # Create properly formatted JSON array without trailing comma
+            JSON_ARRAY=$(IFS=,; echo "${PROJECTS[*]}" | jq -R 'split(",")' | jq -c .)
+            echo "matrix={\"project\":$JSON_ARRAY}" >> "$GITHUB_OUTPUT"
+          fi
+
+  quality-checks:
+    needs: changes
+    if: ${{ needs.changes.outputs.matrix != '{"project":[]}' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{fromJson(needs.changes.outputs.matrix)}}
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: |
+            **/poetry.lock
+            **/requirements*.txt
+
+      - name: Setup Node.js
+        if: ${{ endsWith(matrix.project, '-react') }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Poetry
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        uses: snok/install-poetry@v1
+        with:
+          version: ${{ env.POETRY_VERSION }}
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Load cached venv
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        id: cached-poetry-dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ matrix.project }}/.venv
+          key: venv-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles(format('{0}/poetry.lock', matrix.project)) }}
+
+      - name: Run Python checks
+        if: ${{ !endsWith(matrix.project, '-react') }}
+        working-directory: ${{ matrix.project }}
+        run: |
+          # Install dev dependencies
+          poetry install --no-interaction --no-root --with dev
+          # Install formatters explicitly
+          poetry run pip install black isort
+          # Run checks
+          poetry run black . --check --diff
+          poetry run isort . --check-only --diff
+          poetry run pytest --cov --cov-report=xml
+          poetry run safety check || echo "⚠️ Security issues found"
+
+      - name: Run Frontend checks
+        if: ${{ endsWith(matrix.project, '-react') }}
+        working-directory: ${{ matrix.project }}
+        run: |
+          # Install dependencies with clean state
+          rm -rf node_modules package-lock.json
+          npm install
+          # Run checks
+          npm run lint -- --max-warnings 0
+          npm run test -- --coverage
+          npm audit || echo "⚠️ Security issues found"
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: ${{ matrix.project }}/coverage.xml
+          flags: ${{ matrix.project }}
+          fail_ci_if_error: false
+
+  security-scan:
+    needs: quality-checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs,config'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          timeout: '10m'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: 'Trivy'
+
+  deployment:
+    name: Production Deployment
+    needs: [security-scan]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    concurrency: 
+      group: production
+      cancel-in-progress: false
+    
+    steps:
+      - name: Deployment preparation
+        run: |
+          echo "🚀 Preparing to deploy version ${{ github.sha }}"
+          # Add actual deployment steps here when needed 

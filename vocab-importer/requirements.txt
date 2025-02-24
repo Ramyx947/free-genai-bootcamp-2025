@@ -1,4 +1,0 @@
-python-fasthtml
-python-dotenv
-openai
-

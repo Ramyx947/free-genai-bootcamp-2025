@@ -1,9 +1,11 @@
+version: '3.8'
+
 services:
   # Frontend React Service
   frontend:
     build:
       context: ./frontend-react
-      target: development
+      target: production
     ports:
       - "5173:5173"
     volumes:
@@ -25,7 +27,7 @@ services:
   backend:
     build:
       context: ./backend-flask
-      target: development
+      target: production
     ports:
       - "5000:5000"
     volumes:
@@ -93,4 +95,59 @@ services:
       - "8000:8000"
     depends_on:
       - embedding
-      - llm 
+      - llm
+
+  vocab-importer:
+    build: 
+      context: ./vocab-importer
+      target: production
+    ports:
+      - "5001:5001"
+    environment:
+      - BACKEND_URL=http://backend:5000
+      - FRONTEND_URL=http://frontend:5173
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      backend:
+        condition: service_healthy
+    labels:
+      - "prometheus.io/scrape=true"
+      - "prometheus.io/port=5001"
+      - "prometheus.io/path=/metrics"
+
+  opea-comps:
+    build:
+      context: ./opea-comps
+      dockerfile: Dockerfile
+    ports:
+      - "8000-8002:8000-8002"
+    env_file:
+      - ./opea-comps/.env
+    volumes:
+      - ./opea-comps/comps:/app/comps
+    networks:
+      - ai-network
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - vocab-importer
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+networks:
+  ai-network:
+    driver: bridge 

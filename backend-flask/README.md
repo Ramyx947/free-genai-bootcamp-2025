@@ -1,31 +1,51 @@
-# Romanian Learning API - Backend
+# Romanian Learning App - Backend 🔧
 
 Flask API for managing Romanian vocabulary words, study sessions, and learning activities.
 
-## Quick Start
+## Quick Start 🚀
 
-### Requirements
-- Python 3.12+
-- Poetry
-
-### Setup
 ```bash
-# Install dependencies
-poetry install
+# Start everything
+docker compose up
 
-# Start virtual environment
-poetry shell
-
-# Initialize database
-poetry run invoke init-db
-poetry run invoke migrate
-poetry run invoke seed
-
-# Start server
-poetry run python app.py
+# Just backend
+docker compose up backend
 ```
 
-The API will run at `http://localhost:5000`
+## What It Does 🎯
+
+- Stores your words
+- Manages learning progress
+- Handles file imports
+- Talks to AI services
+
+## API Routes 🛣️
+
+| What It Does      | Route           | Method |
+|------------------|-----------------|--------|
+| Health check     | /health         | GET    |
+| Get words        | /api/words      | GET    |
+| Add words        | /api/words      | POST   |
+| Import vocab     | /api/vocabulary | POST   |
+
+## Testing 🧪
+
+```bash
+# Run tests
+poetry run pytest
+
+# Test coverage
+poetry run pytest --cov
+```
+
+## Watching Metrics 📊
+
+1. Open Grafana: http://localhost:3000
+2. Login: admin/admin
+3. Look for:
+   - Request rates
+   - Response times
+   - Error rates
 
 ## API Documentation
 
@@ -165,29 +185,6 @@ class Group:
     created_at: datetime
     updated_at: datetime
 ```
-
-## Testing
-
-```bash
-# Install test packages
-poetry add pytest pytest-cov --group dev
-
-# Run all tests
-poetry run pytest
-
-# Run with coverage
-poetry run pytest --cov=app tests/
-
-# Run specific tests
-poetry run pytest tests/models/  # Only models
-poetry run pytest tests/routes/  # Only routes
-```
-
-## API Documentation
-- Interactive API docs at `/docs`
-- Swagger UI for testing
-- Request/response examples
-- Schema documentation
 
 ## Frontend Integration
 - CORS enabled for frontend

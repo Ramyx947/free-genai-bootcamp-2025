@@ -10,9 +10,54 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+poetry.lock
 
 # Virtual Environment
-myenv/
-venv/
+.env
+.venv
 env/
-.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+myenv/
+.venvScripts/
+.venvScriptsactivate
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.cursor
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# Local development
+local_settings.py
+db.sqlite3
+
+# Temp files
+*.tmp
+temp/

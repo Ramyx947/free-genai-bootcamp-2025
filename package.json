@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "prepare": "bash scripts/install-hooks.sh"
+  }
+} 

@@ -1,34 +1,122 @@
-# Vocab Importer
+# Vocab Importer Service 📚
 
-An internal tool to help manage vocabulary for a language learning app. This app uses FastHTML and OpenAI's API to let you:
+A service that helps import vocabulary into our Romanian Learning App.
 
-- **Generate Vocabulary:** Create word groups using OpenAI's ChatCompletion API with the `gpt-4o-mini` model.
-- **Import Vocabulary:** Upload a JSON file to add new words.
-- **Export Vocabulary:** Download the current word list as a JSON file.
+## What It Does 🎯
+
+- Takes vocabulary files (JSON, TXT, CSV, PDF)
+- Checks if they're correct
+- Sends them to the main app
+- Watches for problems
+- Tells you if something goes wrong
+
+## Quick Start 🚀
+
+```bash
+# Start everything
+docker compose up
+
+# Just this service
+docker compose up vocab-importer
+```
+
+## API Endpoints 🛣️
+
+| What It Does    | Endpoint     | Method |
+|----------------|--------------|--------|
+| Check health   | /health      | GET    |
+| Import file    | /import      | POST   |
+| Export vocab   | /export      | GET    |
+
+## Monitoring 📊
+
+We use Prometheus to watch:
+- How many requests we get
+- How fast we respond
+- If anything goes wrong
+
+To see metrics:
+1. Go to: http://localhost:5001/metrics
+2. Look for:
+   - vocab_importer_requests_total
+   - vocab_importer_request_latency_seconds
+
+## Testing 🧪
+
+```bash
+# Run all tests
+poetry run pytest
+
+# Run with coverage
+poetry run pytest --cov
+
+# Test metrics
+curl http://localhost:5001/metrics
+```
+
+## Features
+- File format support: JSON, TXT, CSV, PDF
+- Direct integration with backend API
+- Validation and error handling
+- Health checks for container orchestration
+
+## Configuration
+Environment variables:
+- BACKEND_URL - Backend API URL
+- MAX_FILE_SIZE - Maximum file size (default 10MB)
+
+## Development
+```bash
+# Install dependencies
+poetry install
+
+# Run service
+poetry run uvicorn src.main:app --reload --port 5001
+
+# Run tests
+poetry run pytest
+```
+
+## Docker
+```bash
+# Build
+docker build -t vocab-importer .
+
+# Run
+docker run -p 5001:5001 vocab-importer
+```
 
 ## Requirements
 
 - Python 3.7 or higher
-- FastHTML library
+- FastAPI framework
+- Uvicorn ASGI server
 - OpenAI Python library
 
 ## Installation
 
-1. **Install FastHTML:**
+1. **Install FastAPI:**
 
    ```bash
-   pip install python-fasthtml
+   pip install fastapi
    ```
 
 
-2. **Install OpenAI:**
+2. **Install Uvicorn:**
+
+   ```bash
+   pip install uvicorn
+   ```
+
+
+3. **Install OpenAI:**
 
    ```bash
    pip install openai
    ```
 
 
-3. **Set Up Environment Variables:**
+4. **Set Up Environment Variables:**
 
    - **Create a `.env` File:** This file holds sensitive info like API keys. Don't share it publicly.
    - **Create a `.env.example` File:** List required environment variables without sensitive data. Share this file to help others set up their environment.
@@ -43,10 +131,10 @@ An internal tool to help manage vocabulary for a language learning app. This app
 
    **Note:** Add `.env` to your `.gitignore` file to keep it private.
 
-4. **Run the App:**
+5. **Run the App:**
 
    ```bash
-   python main.py
+   uvicorn vocab_importer.main:app --reload --port 5001
    ```
 
 

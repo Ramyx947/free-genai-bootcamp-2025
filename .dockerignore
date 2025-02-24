@@ -1,37 +1,114 @@
 # Version control
 .git
 .gitignore
+.gitattributes
+
+# Dependencies
+**/node_modules
+**/.venv
+**/venv
+**/__pycache__
+**/*.pyc
+
+# Environment
+**/.env
+**/.env.*
+
+# Development
+**/.vscode
+**/.idea
+**/*.log
+**/coverage
+**/.coverage
+**/htmlcov
+**/.pytest_cache
+
+# Documentation
+**/README.md
+**/docs
+**/*.md
+
+# Build
+**/dist
+**/build
+**/*.egg-info
+
+# System
+.DS_Store
+Thumbs.db
 
 # Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
 *.py[cod]
 *$py.class
-.pytest_cache/
-.coverage
-htmlcov/
+*.so
+.Python
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
 .env
-.venv
+.venv/
+env/
 venv/
 ENV/
-
-# Node
-node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-dist/
-build/
+myenv/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+.cursor
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+coverage.xml
+tests/
+pytest.ini
+
+# Docker
+.docker/
+docker-compose.override.yml
+Dockerfile
+.dockerignore
+
+# Development
+local_settings.py
+db.sqlite3
+
+# Node
+npm-debug.log
+yarn-debug.log
+yarn-error.log
 
 # OS
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Python
+**/__pycache__
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.pytest_cache
+**/.coverage
+**/htmlcov
+**/venv
+**/venv/
+**/ENV/
+
+# IDE
+**/idea/
+**/vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker Compose
+**/docker-compose.override.yml 
