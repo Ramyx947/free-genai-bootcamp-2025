@@ -8,6 +8,7 @@ from typing import Any, Dict
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from openai import AsyncOpenAI
 
 from .config import Settings
 from .errors.exceptions import FileProcessingError, VocabImporterError
@@ -17,6 +18,13 @@ from .services.file_processor import process_file
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+# Initialize OpenAI client lazily
+def get_openai_client():
+    if not hasattr(get_openai_client, "_client"):
+        get_openai_client._client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    return get_openai_client._client
 
 
 def create_app() -> FastAPI:
@@ -158,17 +166,16 @@ def create_app() -> FastAPI:
 
     @app.get("/export")
     async def export_vocabulary() -> FileResponse:
-        """
-        Export vocabulary as JSON file.
-
-        Raises:
-            502: Backend service error
-            500: Export processing error
-        """
+        """Export vocabulary as JSON file."""
+        temp_file = None
         try:
             # Get vocabulary from backend
             try:
                 vocabulary_data = await get_vocabulary()
+                if not vocabulary_data:
+                    raise VocabImporterError("No data received from backend")
+            except VocabImporterError as e:
+                raise e
             except Exception as e:
                 raise VocabImporterError(
                     f"Error fetching from backend: {str(e)}",
@@ -178,38 +185,56 @@ def create_app() -> FastAPI:
             # Create temporary file
             try:
                 temp_file = tempfile.NamedTemporaryFile(
-                    mode="w+", suffix=".json", delete=False
+                    mode="w+", suffix=".json", delete=False, encoding="utf-8"
                 )
 
-                with temp_file as f:
-                    json.dump(vocabulary_data, f, indent=2)
+                # Ensure data is serializable
+                if not isinstance(vocabulary_data, (dict, list)):
+                    raise FileProcessingError(
+                        "Invalid data format received from backend",
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    )
+
+                # Write data to file
+                json.dump(vocabulary_data, temp_file, indent=2, ensure_ascii=False)
+                temp_file.flush()
+                os.fsync(temp_file.fileno())  # Ensure data is written to disk
+                temp_file.close()
 
                 # Generate filename with timestamp
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 filename = f"vocabulary_export_{timestamp}.json"
 
-                response = FileResponse(
+                # Create async cleanup function
+                async def cleanup_file():
+                    try:
+                        if os.path.exists(temp_file.name):
+                            os.unlink(temp_file.name)
+                    except Exception as e:
+                        logger.error(f"Error cleaning up temp file: {e}")
+
+                return FileResponse(
                     path=temp_file.name,
                     filename=filename,
                     media_type="application/json",
+                    background=cleanup_file,  # Pass the async function directly
                 )
 
-                # Clean up temp file after response is sent
-                response.background = lambda: os.unlink(temp_file.name)
-
-                return response
-
             except Exception as e:
+                if temp_file and os.path.exists(temp_file.name):
+                    os.unlink(temp_file.name)
                 raise FileProcessingError(
                     f"Error creating export file: {str(e)}",
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
 
-        except (FileProcessingError, VocabImporterError) as e:
-            logger.error(f"Export error: {str(e)}")
+        except VocabImporterError as e:
+            logger.error(f"Export error: {e.status_code}: {str(e)}")
             raise HTTPException(status_code=e.status_code, detail=str(e))
         except Exception as e:
             logger.error(f"Unexpected export error: {str(e)}", exc_info=True)
+            if temp_file and os.path.exists(temp_file.name):
+                os.unlink(temp_file.name)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Internal server error during export",
@@ -219,3 +244,43 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+
+
+def generate_vocab_with_openai(prompt=None):
+    """Generate vocabulary with OpenAI."""
+    try:
+        if os.getenv("DEVELOPMENT_MODE") == "true":
+            return {
+                "groups": [
+                    {"group": "Basic Greetings", "words": ["hello", "goodbye"]},
+                    {"group": "Numbers", "words": ["one", "two"]},
+                ]
+            }
+
+        client = get_openai_client()
+        if prompt is None:
+            prompt = (
+                "Generate a list of vocabulary groups for a language learning app. "
+                "Each group should have a 'group' key and a 'words' key which is "
+                "a list of words. Return the output in valid JSON format."
+            )
+
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an assistant that generates vocabulary groups.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.7,
+            max_tokens=300,
+        )
+
+        try:
+            return json.loads(response.choices[0].message.content)
+        except json.JSONDecodeError:
+            return {"error": "Invalid JSON response from OpenAI"}
+    except Exception as e:
+        return {"error": str(e)}

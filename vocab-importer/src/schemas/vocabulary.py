@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator, validator
 
 
 class Word(BaseModel):
@@ -10,14 +10,13 @@ class Word(BaseModel):
 
 
 class VocabularyGroup(BaseModel):
-    group: str = Field(..., min_length=1, max_length=100)
-    description: Optional[str] = None
-    words: List[Word]
+    group: str
+    words: list[str]
 
-    @validator("words")
+    @field_validator("words")
     def validate_words(cls, v):
         if not v:
-            raise ValueError("Group must contain at least one word")
+            raise ValueError("Words list cannot be empty")
         return v
 
 

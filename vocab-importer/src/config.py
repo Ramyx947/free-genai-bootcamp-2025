@@ -1,10 +1,15 @@
 from functools import lru_cache
 from typing import Set
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    # OpenAI settings
+    PROJECT_ID: str | None = None
+    OPENAI_API_KEY: str | None = None
+    ORG_ID: str | None = None
+
     # Service URLs
     BACKEND_URL: str = "http://localhost:5000"
     FRONTEND_URL: str = "http://localhost:5173"
@@ -25,9 +30,13 @@ class Settings(BaseSettings):
     LLM_TEMPERATURE: float = 0.7
     LLM_MAX_TOKENS: int = 300
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # Replace the old Config class with model_config
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="allow",  # This allows extra fields
+    )
 
 
 @lru_cache()
