@@ -1,6 +1,7 @@
-import pytest
 from datetime import datetime
-from app.models import Word, Group, WordGroup
+
+from app.models import Group, Word
+
 
 def test_word_from_db_row():
     row = (
@@ -11,11 +12,11 @@ def test_word_from_db_row():
         "noun",
         '["fruit"]',
         "2024-03-20T10:00:00",
-        "2024-03-20T10:00:00"
+        "2024-03-20T10:00:00",
     )
-    
+
     word = Word.from_db_row(row)
-    
+
     assert word.id == 1
     assert word.romanian == "măr"
     assert word.english == "apple"
@@ -25,6 +26,7 @@ def test_word_from_db_row():
     assert isinstance(word.created_at, datetime)
     assert isinstance(word.updated_at, datetime)
 
+
 def test_group_from_db_row():
     row = (
         1,
@@ -32,14 +34,14 @@ def test_group_from_db_row():
         "Romanian fruit vocabulary",
         10,
         "2024-03-20T10:00:00",
-        "2024-03-20T10:00:00"
+        "2024-03-20T10:00:00",
     )
-    
+
     group = Group.from_db_row(row)
-    
+
     assert group.id == 1
     assert group.name == "Fruits"
     assert group.description == "Romanian fruit vocabulary"
     assert group.word_count == 10
     assert isinstance(group.created_at, datetime)
-    assert isinstance(group.updated_at, datetime) 
+    assert isinstance(group.updated_at, datetime)

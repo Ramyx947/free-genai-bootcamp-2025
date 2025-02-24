@@ -1,30 +1,27 @@
-import sqlite3
-import json
+from app.extensions import db
+from app.models import Word
 
-DB_FILE = 'words.db'
 
-def test_database():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    
-    # Check that the tables exist
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cursor.fetchall()
-    print("Tables in the database:", tables)
-    
-    # Run a sample query on the words table
-    cursor.execute("SELECT id, romanian, english FROM words;")
-    words = cursor.fetchall()
-    print("Words:", words)
-    
-    # If there is JSON data, print one entry parsed as JSON
-    cursor.execute("SELECT parts FROM words LIMIT 1;")
-    result = cursor.fetchone()
-    if result:
-        parts = json.loads(result[0])
-        print("Sample parts data:", parts)
-    
-    conn.close()
+def test_database(app):
+    with app.app_context():
+        # Create tables
+        db.create_all()
 
-if __name__ == "__main__":
-    test_database()
+        # Add test data
+        word = Word(
+            romanian="măr",
+            english="apple",
+            pronunciation="mur",
+            part_of_speech="noun",
+            parts=["fruit"],
+        )
+        db.session.add(word)
+        db.session.commit()
+
+        # Query and verify
+        words = Word.query.all()
+        assert len(words) > 0
+        assert words[0].romanian == "măr"
+
+        # Clean up
+        db.drop_all()
