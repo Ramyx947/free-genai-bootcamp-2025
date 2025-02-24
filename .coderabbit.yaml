@@ -1,3 +1,6 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+version: 2
+
 # CodeRabbit Configuration
 language: "en-US"
 
@@ -13,38 +16,40 @@ reviews:
     labels:
       - "no-review"
       - "dependencies"
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
 
   # Path filters for file types to review
   path_filters:
-    - "**/*.py"
-    - "**/*.ts"
-    - "**/*.tsx"
-    - "**/*.js"
-    - "**/*.jsx"
+    - "backend-flask/**/*.py"
+    - "frontend-react/**/*.{ts,tsx}"
 
   # Path-specific instructions
   path_instructions:
-    - path: "backend-flask/**"
+    - path: "backend-flask/**/*.py"
       instructions: |
-        Follow PEP 8 style guide, use Flask application factory pattern,
-        implement proper error handling, use environment variables,
-        write docstrings, ensure test coverage.
-
-    - path: "opea-comps/**"
+        Review Python code for:
+        - PEP 8 compliance
+        - Type hints usage
+        - Proper error handling
+        - API consistency
+        - Test coverage
+    - path: "frontend-react/**/*.{ts,tsx}"
       instructions: |
-        Follow PEP 8 style guide, document API parameters and responses,
-        handle API errors gracefully, use environment variables,
-        write unit tests.
-
-    - path: "frontend-react/**"
-      instructions: |
-        Follow TypeScript best practices, use proper component organization,
-        implement error boundaries, write unit tests,
-        follow React hooks guidelines, manage state properly.
+        Review React/TypeScript code for:
+        - TypeScript type safety
+        - React best practices
+        - Component structure
+        - State management
+        - Test coverage
 
 # Chat settings
 chat:
   auto_reply: true
+  language: english
+  review_comment_tone: constructive
   integrations:
     github:
       enabled: true
@@ -64,4 +69,13 @@ knowledge_base:
 # Code generation settings
 code_generation:
   enabled: true
-  docstrings: true 
+  docstrings:
+    enabled: true
+    style: google
+  tests:
+    enabled: true
+    framework: pytest
+
+code_suggestions:
+  autofix: false
+  validation_level: strict 
