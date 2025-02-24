@@ -34,12 +34,12 @@ myenv/
 .vscode/
 *.swp
 *.swo
-.cursor
 
 # Testing
 .coverage
-htmlcov/
 .pytest_cache/
+htmlcov/
+coverage.xml
 
 # Docker
 .docker/
@@ -61,3 +61,21 @@ db.sqlite3
 # Temp files
 *.tmp
 temp/
+# Python virtual environments
+myenv/
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# IDE
+.idea/
+.vscode/
