@@ -1,5 +1,31 @@
 {
+  "name": "free-genai-bootcamp-2025",
+  "private": true,
+  "workspaces": [
+    "frontend-react"
+  ],
   "scripts": {
-    "prepare": "bash scripts/install-hooks.sh"
+    "prepare": "husky install",
+    "precommit": "cd frontend-react && npm run lint && npm run test",
+    "lint": "npm run lint --workspace=frontend-react",
+    "lint:fix": "npm run lint:fix --workspace=frontend-react",
+    "test": "npm run test --workspace=frontend-react",
+    "build": "npm run build --workspace=frontend-react",
+    "dev": "npm run dev --workspace=frontend-react"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0"
+  },
+  "lint-staged": {
+    "backend-flask/**/*.py": [
+      "cd backend-flask && poetry run black",
+      "cd backend-flask && poetry run flake8",
+      "cd backend-flask && poetry run isort"
+    ],
+    "frontend-react/**/*.{ts,tsx}": [
+      "cd frontend-react && npm run lint:fix",
+      "cd frontend-react && npm run test:staged"
+    ]
   }
 } 
