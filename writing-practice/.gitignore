@@ -1,0 +1,46 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.env/
+.venv/
+env/
+venv/
+ENV/
+Lib/
+Scripts/
+Include/
+pyvenv.cfg
+*.pyc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AWS CDK
+cdk.out/
+cdk.context.json
+.cdk.staging/
+cdk-outputs.json
+
+# Dependencies
+node_modules/
+site-packages/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
