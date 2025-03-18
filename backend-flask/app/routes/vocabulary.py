@@ -36,26 +36,37 @@ def generate_vocab():
         if "response" in result:
             result["response"] = guardrails.process_output(result["response"], formal)
 
-        # Return the result
         return jsonify(result)
 
     except ValueError as e:
-        # Handle validation errors
-        return jsonify({"error": str(e)}), 400
+        current_app.logger.error(f"Validation error in generate_vocab: {e}")
+        # In testing mode, return the full error message; otherwise, a generic one.
+        if current_app.config.get("TESTING") or current_app.config.get("DEBUG"):
+            return jsonify({"error": str(e)}), 400
+        else:
+            return jsonify({"error": "Invalid input provided."}), 400
     except Exception as e:
-        current_app.logger.error(f"Error in generate_vocab: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.error(f"Error in generate_vocab: {e}")
+        return jsonify({"error": "An internal error occurred."}), 500
 
 
 @vocabulary_bp.route("/", methods=["POST"])
 @handle_errors
 def create_vocabulary():
-    data = request.get_json()
-    if not data:
-        raise ValueError("No JSON data provided")
+    try:
+        data = request.get_json()
+        if not data:
+            raise ValueError("No JSON data provided")
 
-    prompt = data.get("prompt")
-    if not prompt:
-        raise ValueError("Prompt is required")
+        prompt = data.get("prompt")
+        if not prompt:
+            raise ValueError("Prompt is required")
 
-    # Rest of the function...
+        # ... rest of the function logic ...
+
+    except ValueError as e:
+        current_app.logger.error(f"Validation error in create_vocabulary: {e}")
+        return jsonify({"error": "Invalid input provided."}), 400
+    except Exception as e:
+        current_app.logger.error(f"Unexpected error in create_vocabulary: {e}")
+        return jsonify({"error": "An internal error occurred. Please try again later."}), 500

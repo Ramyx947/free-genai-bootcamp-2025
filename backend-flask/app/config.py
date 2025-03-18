@@ -1,3 +1,5 @@
+"""Application configuration."""
+
 # app/config.py
 import os
 from datetime import timedelta
@@ -14,7 +16,8 @@ class Config:
     BASE_DIR = path.abspath(path.dirname(__file__))
 
     # Path to the SQLite database file (located in the project root)
-    DB_PATH = path.join(BASE_DIR, "..", "words.db")
+    # Updated from "words.db" to "app.db" for consistency.
+    DB_PATH = path.join(BASE_DIR, "..", "app.db")
 
     # (If using SQLAlchemy, you might define the URI like so)
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///app.db")
@@ -58,13 +61,11 @@ class Config:
 
 class DevelopmentConfig(Config):
     """Development configuration."""
-
     DEBUG = True
 
 
 class TestingConfig(Config):
     """Testing configuration."""
-
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     WTF_CSRF_ENABLED = False
@@ -72,7 +73,6 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     """Production configuration."""
-
     DEBUG = False
     TESTING = False
 

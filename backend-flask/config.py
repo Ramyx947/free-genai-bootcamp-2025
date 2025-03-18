@@ -53,20 +53,17 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     """Production configuration."""
-
     DEBUG = False
     TESTING = False
 
-    # Use stronger secret key in production
     SECRET_KEY = os.environ.get("SECRET_KEY")
+    if not SECRET_KEY:
+        raise ValueError("SECRET_KEY environment variable is required in production")
 
     # Database should be configured via DATABASE_URL env var
 
-    # Ensure OpenAI API key is set
     if not os.environ.get("OPENAI_API_KEY"):
-        raise ValueError(
-            "OPENAI_API_KEY environment variable is required in production"
-        )
+        raise ValueError("OPENAI_API_KEY environment variable is required in production")
 
 
 # Configuration dictionary

@@ -9,22 +9,26 @@ logger = logging.getLogger(__name__)
 
 
 def handle_errors(f):
-    """Decorator to handle errors in routes."""
-
+    """Decorator to handle errors in routes without exposing sensitive information in production."""
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         try:
             return f(*args, **kwargs)
         except Exception as e:
-            logger.error(f"Error in {f.__name__}: {str(e)}")
-            return jsonify({"error": str(e)}), 500
+            # Log the full exception details internally
+            logger.error(f"Error in {f.__name__}: {e}", exc_info=True)
+            # If in testing or debug mode, return the detailed error; otherwise, return a generic error message
+            if current_app.config.get("TESTING") or current_app.config.get("DEBUG"):
+                error_message = str(e)
+            else:
+                error_message = "An internal server error occurred."
+            return jsonify({"error": error_message}), 500
 
     return decorated_function
 
 
 def apply_guardrails(f):
-    """Apply LangChain guardrails to the request and response."""
-
+    """Apply LangChain guardrails to the request and response without leaking internal error details in production."""
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         # Skip guardrails if disabled in config
@@ -35,7 +39,7 @@ def apply_guardrails(f):
             # Get request data
             data = request.get_json()
             if not data:
-                return jsonify({"error": "No JSON data provided"}), 400
+                return jsonify({"error": "No JSON data provided."}), 400
 
             # Extract text and formality preference
             text = data.get("text", "")
@@ -46,12 +50,17 @@ def apply_guardrails(f):
             try:
                 guardrails.validate_input(text)
             except ValueError as e:
-                return jsonify({"error": str(e)}), 400
+                # In testing/debug mode, return the original validation error
+                if current_app.config.get("TESTING") or current_app.config.get("DEBUG"):
+                    error_message = str(e)
+                else:
+                    error_message = "Invalid input provided."
+                return jsonify({"error": error_message}), 400
 
             # Call the original function
             response = f(*args, **kwargs)
 
-            # If response is a tuple (response, status_code)
+            # If response is a tuple (response object, status code)
             if isinstance(response, tuple) and len(response) == 2:
                 resp_obj, status_code = response
 
@@ -70,10 +79,18 @@ def apply_guardrails(f):
             return response
 
         except ValueError as e:
-            # Handle validation errors
-            return jsonify({"error": str(e)}), 400
+            # For other ValueErrors, treat similarly as above
+            if current_app.config.get("TESTING") or current_app.config.get("DEBUG"):
+                error_message = str(e)
+            else:
+                error_message = "Invalid input provided."
+            return jsonify({"error": error_message}), 400
         except Exception as e:
-            logger.error(f"Error in guardrails: {str(e)}")
-            return jsonify({"error": "Internal server error"}), 500
+            logger.error(f"Error in guardrails: {e}", exc_info=True)
+            if current_app.config.get("TESTING") or current_app.config.get("DEBUG"):
+                error_message = str(e)
+            else:
+                error_message = "Internal server error."
+            return jsonify({"error": error_message}), 500
 
     return decorated_function
