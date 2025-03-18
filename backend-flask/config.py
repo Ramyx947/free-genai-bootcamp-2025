@@ -53,6 +53,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     """Production configuration."""
+
     DEBUG = False
     TESTING = False
 
@@ -63,7 +64,9 @@ class ProductionConfig(Config):
     # Database should be configured via DATABASE_URL env var
 
     if not os.environ.get("OPENAI_API_KEY"):
-        raise ValueError("OPENAI_API_KEY environment variable is required in production")
+        raise ValueError(
+            "OPENAI_API_KEY environment variable is required in production"
+        )
 
 
 # Configuration dictionary

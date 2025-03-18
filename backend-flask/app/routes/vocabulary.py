@@ -69,4 +69,7 @@ def create_vocabulary():
         return jsonify({"error": "Invalid input provided."}), 400
     except Exception as e:
         current_app.logger.error(f"Unexpected error in create_vocabulary: {e}")
-        return jsonify({"error": "An internal error occurred. Please try again later."}), 500
+        return (
+            jsonify({"error": "An internal error occurred. Please try again later."}),
+            500,
+        )

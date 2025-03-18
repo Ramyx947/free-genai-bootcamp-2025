@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 def handle_errors(f):
     """Decorator to handle errors in routes without exposing sensitive information in production."""
+
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         try:
@@ -29,6 +30,7 @@ def handle_errors(f):
 
 def apply_guardrails(f):
     """Apply LangChain guardrails to the request and response without leaking internal error details in production."""
+
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         # Skip guardrails if disabled in config
