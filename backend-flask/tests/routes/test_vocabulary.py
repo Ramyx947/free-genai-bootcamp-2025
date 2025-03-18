@@ -1,8 +1,10 @@
 """Tests for vocabulary routes."""
 
-import pytest
 from unittest.mock import patch
-from flask import Flask, jsonify, Blueprint, request
+
+import pytest
+from flask import Blueprint, Flask, jsonify, request
+
 from app.utils.guardrails import GuardrailResult
 
 

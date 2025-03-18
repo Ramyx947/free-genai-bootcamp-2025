@@ -1,5 +1,7 @@
+from unittest.mock import MagicMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+
 from app import create_app
 
 # Patch the OpenAI client at module level to ensure it's patched before any imports

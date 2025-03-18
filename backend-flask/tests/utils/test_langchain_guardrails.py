@@ -1,5 +1,7 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from app.utils.langchain_guardrails import LangChainRomanianGuardrails
 
 

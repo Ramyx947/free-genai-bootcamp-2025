@@ -6,11 +6,13 @@ Tests for core API endpoints:
 - Group management
 """
 
-import pytest
 import json
+
+import pytest
 from flask.testing import FlaskClient
+
 from app import db
-from app.models import Word, Group
+from app.models import Group, Word
 
 
 @pytest.fixture(autouse=True)

@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify, request, current_app
 from asgiref.sync import async_to_sync
+from flask import Blueprint, current_app, jsonify, request
 
 from ..services.openai_service import generate_vocabulary
-from ..utils.middleware import handle_errors
 from ..utils.langchain_guardrails import LangChainRomanianGuardrails
+from ..utils.middleware import handle_errors
 
 vocabulary_bp = Blueprint("vocabulary", __name__)
 

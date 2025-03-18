@@ -1,6 +1,7 @@
-import pytest
 from unittest.mock import MagicMock
-from flask import Flask, jsonify, Blueprint
+
+import pytest
+from flask import Blueprint, Flask, jsonify
 
 
 @pytest.fixture

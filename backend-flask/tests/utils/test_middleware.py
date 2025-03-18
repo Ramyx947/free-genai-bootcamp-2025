@@ -1,9 +1,11 @@
 """Tests for middleware functions."""
 
-import pytest
 from unittest.mock import patch
-from flask import Flask, jsonify, request, Blueprint
-from app.utils.middleware import handle_errors, apply_guardrails
+
+import pytest
+from flask import Blueprint, Flask, jsonify, request
+
+from app.utils.middleware import apply_guardrails, handle_errors
 
 
 @pytest.fixture

@@ -1,8 +1,10 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from app.services.openai_service import (
-    generate_vocabulary,
     default_generate_vocab,
+    generate_vocabulary,
     get_openai_client,
 )
 

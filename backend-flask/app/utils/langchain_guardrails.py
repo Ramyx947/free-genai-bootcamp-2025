@@ -1,10 +1,11 @@
 """LangChain-based guardrails for Romanian language learning."""
 
 import re
+
+from flask import current_app, has_app_context
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
-from flask import current_app, has_app_context
 
 
 class LangChainRomanianGuardrails:

@@ -7,8 +7,8 @@ def register_blueprints(app: Flask):
     """Register all blueprints with the app."""
     from .dashboard import dashboard_bp
     from .groups import groups_bp
-    from .words import words_bp
     from .vocabulary import vocabulary_bp
+    from .words import words_bp
 
     app.register_blueprint(dashboard_bp, url_prefix="/api/dashboard")
     app.register_blueprint(words_bp, url_prefix="/api/words")

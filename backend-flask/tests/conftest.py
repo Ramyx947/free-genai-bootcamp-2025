@@ -1,8 +1,9 @@
 """Test fixtures for the Flask application."""
 
-import pytest
 from typing import Generator
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 from flask import Flask
 from flask.testing import FlaskClient
 

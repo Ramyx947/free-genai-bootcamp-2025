@@ -1,8 +1,10 @@
 """Tests for the guardrails module."""
 
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
-from app.utils.guardrails import RomanianGuardrails, GuardrailResult
+
+from app.utils.guardrails import GuardrailResult, RomanianGuardrails
 
 
 @pytest.fixture

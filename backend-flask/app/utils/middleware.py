@@ -1,6 +1,8 @@
-import logging
 import functools
-from flask import request, jsonify, current_app
+import logging
+
+from flask import current_app, jsonify, request
+
 from .langchain_guardrails import LangChainRomanianGuardrails
 
 logger = logging.getLogger(__name__)

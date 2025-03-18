@@ -7,7 +7,7 @@ Tests core database operations:
 """
 
 from app import db
-from app.models import Word, Group
+from app.models import Group, Word
 
 
 def test_database(app) -> None:
