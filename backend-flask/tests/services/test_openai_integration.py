@@ -1,61 +1,74 @@
-from unittest.mock import AsyncMock
-
 import pytest
-
+from unittest.mock import patch, MagicMock
 from app.services.openai_service import generate_vocabulary
 
 
 @pytest.fixture
-def mock_generator():
-    async def mock_generate(prompt: str = None):
-        return {
-            "groups": [
-                {"group": "Basic Greetings", "words": ["hello", "goodbye"]},
-                {"group": "Numbers", "words": ["one", "two"]},
-            ]
-        }
-
-    return AsyncMock(side_effect=mock_generate)
+def mock_openai_client():
+    """Create a mock OpenAI client for testing."""
+    mock_client = MagicMock()
+    mock_response = MagicMock()
+    mock_response.choices = [
+        MagicMock(message=MagicMock(content="Here is some Romanian vocabulary"))
+    ]
+    mock_client.chat.completions.create.return_value = mock_response
+    return mock_client
 
 
 @pytest.mark.asyncio
-async def test_generate_vocabulary_success(mock_generator):
+async def test_generate_vocabulary_success(mock_openai_client):
     """Test successful vocabulary generation."""
-    result = await generate_vocabulary(generator=mock_generator)
-
-    assert "groups" in result
-    assert len(result["groups"]) == 2
-    mock_generator.assert_called_once_with(None)
+    with patch(
+        "app.services.openai_service.get_openai_client", return_value=mock_openai_client
+    ):
+        result = await generate_vocabulary("Test prompt")
+        assert "response" in result
+        assert result["status"] == "success"
 
 
 @pytest.mark.asyncio
-async def test_generate_vocabulary_with_prompt(mock_generator):
+async def test_generate_vocabulary_with_prompt(mock_openai_client):
     """Test vocabulary generation with custom prompt."""
     test_prompt = "Generate Romanian food vocabulary"
 
-    result = await generate_vocabulary(prompt=test_prompt, generator=mock_generator)
+    with patch(
+        "app.services.openai_service.get_openai_client", return_value=mock_openai_client
+    ):
+        result = await generate_vocabulary(test_prompt)
+        assert "response" in result
 
-    assert "groups" in result
-    mock_generator.assert_called_once_with(test_prompt)
+        # Verify the prompt was passed correctly
+        mock_openai_client.chat.completions.create.assert_called_once_with(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": test_prompt}],
+            temperature=0.7,
+        )
 
 
 @pytest.mark.asyncio
-async def test_generate_vocabulary_error_handling(mock_generator):
+async def test_generate_vocabulary_error_handling():
     """Test error handling during vocabulary generation."""
-    mock_generator.side_effect = Exception("API Error")
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.side_effect = Exception("API Error")
 
-    result = await generate_vocabulary(generator=mock_generator)
-
-    assert "error" in result
-    assert "API Error" in result["error"]
+    with patch(
+        "app.services.openai_service.get_openai_client", return_value=mock_client
+    ):
+        with pytest.raises(Exception):
+            await generate_vocabulary("Test prompt")
 
 
 @pytest.mark.asyncio
-async def test_generate_vocabulary_invalid_response(mock_generator):
+async def test_generate_vocabulary_invalid_response():
     """Test handling of invalid response format."""
-    mock_generator.side_effect = lambda x: {"invalid": "format"}
+    mock_client = MagicMock()
+    mock_response = MagicMock()
+    # Create an invalid response structure
+    mock_response.choices = []  # Empty choices
+    mock_client.chat.completions.create.return_value = mock_response
 
-    result = await generate_vocabulary(generator=mock_generator)
-
-    assert "error" in result
-    assert "Invalid response format" in result["error"]
+    with patch(
+        "app.services.openai_service.get_openai_client", return_value=mock_client
+    ):
+        with pytest.raises(IndexError):
+            await generate_vocabulary("Test prompt")

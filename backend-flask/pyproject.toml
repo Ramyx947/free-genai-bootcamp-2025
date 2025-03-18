@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-flask = "^3.0.0"
+flask = {extras = ["async"], version = "^3.0.0"}
 flask-jwt-extended = "^4.7.1"
 flask-cors = "^5.0.0"
 flask-limiter = "^3.10.1"
@@ -16,6 +16,10 @@ flask-swagger-ui = "^4.11.1"
 flask-sqlalchemy = "^3.1.1"
 flask-migrate = "^4.0.5"
 vocab-importer = {path = "../vocab-importer"}
+asgiref = "^3.7.2"
+openai = "^1.0.0"
+langchain-core = "^0.3.40"
+langchain-openai = "^0.3.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
@@ -41,11 +45,12 @@ line_length = 88
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = "test_*.py"
+python_files = ["test_*.py"]
 addopts = """
+    -v
     --cov=app
     --cov-report=term-missing
-    --cov-report=html
+    --asyncio-mode=strict
 """
 
 [tool.poetry.scripts]
@@ -53,3 +58,12 @@ test = "pytest:main"
 format = "black:main"
 lint = "flake8:main"
 sort = "isort:main"
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "tests/*",
+    "**/__init__.py",
+    "app/migrations/*",
+    "app/config.py"
+]

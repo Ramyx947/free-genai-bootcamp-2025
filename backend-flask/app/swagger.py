@@ -1,3 +1,92 @@
+from flask_swagger_ui import get_swaggerui_blueprint
+
+SWAGGER_URL = "/api/docs"
+API_URL = "/static/swagger.json"
+
+swagger_ui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL, API_URL, config={"app_name": "Romanian Learning API"}
+)
+
+# Example swagger.json content to be placed in static/swagger.json
+"""
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Romanian Learning API",
+    "description": "API for managing Romanian vocabulary with AI-powered content generation "
+    "and safety guardrails",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/vocabulary": {
+      "post": {
+        "summary": "Generate vocabulary with AI",
+        "description": "Uses AI to generate vocabulary with guardrails for content safety and quality",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VocabularyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vocabulary generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VocabularyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or guardrails validation failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuardrailsError"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Vocabulary"]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GuardrailsError": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "type": "string",
+            "example": "Input contains inappropriate content"
+          },
+          "details": {
+            "type": "object",
+            "properties": {
+              "reason": {
+                "type": "string",
+                "example": "Content violates community guidelines"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
 swagger_config = {
     "swagger": "2.0",
     "info": {

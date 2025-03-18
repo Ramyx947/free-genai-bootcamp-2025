@@ -2,6 +2,10 @@
 import os
 from datetime import timedelta
 from os import path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 class Config:
@@ -12,7 +16,7 @@ class Config:
     DB_PATH = path.join(BASE_DIR, "..", "words.db")
 
     # (If using SQLAlchemy, you might define the URI like so)
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///words.db")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///app.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT configuration
@@ -39,3 +43,44 @@ class Config:
         },
         "root": {"level": "INFO", "handlers": ["wsgi"]},
     }
+
+    # Guardrail configuration
+    GUARDRAILS = {
+        "min_query_length": 3,
+        "max_query_length": 500,
+        "default_formality": True,
+        "enable_diacritic_check": True,
+        "enable_topic_filter": True,
+        "enable_profanity_filter": True,
+    }
+
+
+class DevelopmentConfig(Config):
+    """Development configuration."""
+
+    DEBUG = True
+
+
+class TestingConfig(Config):
+    """Testing configuration."""
+
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    WTF_CSRF_ENABLED = False
+
+
+class ProductionConfig(Config):
+    """Production configuration."""
+
+    DEBUG = False
+    TESTING = False
+
+
+def get_config(config_name):
+    """Get configuration by name."""
+    config_map = {
+        "development": DevelopmentConfig,
+        "testing": TestingConfig,
+        "production": ProductionConfig,
+    }
+    return config_map.get(config_name, DevelopmentConfig)
