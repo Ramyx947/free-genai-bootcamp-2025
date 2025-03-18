@@ -1,7 +1,22 @@
 import logging
-from typing import Callable, Dict, Optional
+import os
+from typing import Dict, Optional
+
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
+
+# Global client variable to allow for easier patching in tests
+_client = None
+
+
+def get_openai_client():
+    """Get or create an OpenAI client instance."""
+    global _client
+    if _client is None:
+        api_key = os.environ.get("OPENAI_API_KEY", "dummy_key_for_tests")
+        _client = OpenAI(api_key=api_key)
+    return _client
 
 
 # Default implementation that will be replaced in tests
@@ -21,28 +36,20 @@ async def default_generate_vocab(prompt: Optional[str] = None) -> Dict:
 
 
 # Service that accepts the generator function
-async def generate_vocabulary(
-    prompt: Optional[str] = None, generator: Callable = default_generate_vocab
-) -> Dict:
-    """Generate vocabulary using OpenAI.
-
-    Args:
-        prompt: Optional custom prompt for vocabulary generation
-        generator: Function to generate vocabulary (for testing)
-
-    Returns:
-        Dict containing generated vocabulary groups or error message
-    """
+async def generate_vocabulary(prompt: str, formal: bool = True) -> Dict:
+    """Generate vocabulary using OpenAI."""
     try:
-        result = await generator(prompt)
+        # Get client instance
+        client = get_openai_client()
 
-        # Validate response format
-        if not isinstance(result, dict) or "groups" not in result:
-            logger.error(f"Invalid response format from OpenAI: {result}")
-            return {"error": "Invalid response format from OpenAI"}
+        # Using the OpenAI API
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+        )
 
-        return result
-
+        return {"response": response.choices[0].message.content, "status": "success"}
     except Exception as e:
-        logger.error(f"Error generating vocabulary: {str(e)}")
-        return {"error": str(e)}
+        logger.error(f"OpenAI API error: {str(e)}")
+        raise

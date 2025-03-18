@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Check if we're on main branch
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" != "main" ]; then
+    echo "Not on main branch, skipping tests"
+    exit 0
+fi
+
+echo "Running guardrails tests..."
+cd backend-flask
+poetry run pytest tests/utils/test_guardrails.py tests/utils/test_middleware.py tests/utils/test_guardrails_integration.py -v
+
+if [ $? -ne 0 ]; then
+    echo "Guardrails tests failed! Please fix before pushing."
+    exit 1
+fi
+
+# Run full test suite
+echo "Running full test suite..."
+poetry run pytest
+
+if [ $? -ne 0 ]; then
+    echo "Tests failed! Please fix before pushing."
+    exit 1
+fi 

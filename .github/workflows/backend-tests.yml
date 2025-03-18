@@ -1,0 +1,44 @@
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend-flask/**'
+      - '.github/workflows/backend-tests.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          
+      - name: Install dependencies
+        run: |
+          cd backend-flask
+          poetry install
+          
+      - name: Run tests with coverage
+        run: |
+          cd backend-flask
+          poetry run pytest --cov=app tests/ --cov-report=xml
+          
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./backend-flask/coverage.xml
+          
+      - name: Check guardrails implementation
+        run: |
+          cd backend-flask
+          poetry run pytest tests/utils/test_guardrails.py tests/utils/test_middleware.py -v 
