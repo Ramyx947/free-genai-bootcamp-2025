@@ -1,0 +1,18 @@
+{
+  "traditions": [
+    {
+      "id": "1",
+      "name": "Mărțișor",
+      "description": "Describe the tradition of giving and wearing Mărțișor at the beginning of spring.",
+      "image_url": "/images/martisor.jpg",
+      "difficulty": "B1"
+    },
+    {
+      "id": "2",
+      "name": "Sânziene",
+      "description": "Explain how Romanians celebrate Sânziene on June 24th.",
+      "image_url": "/images/sanziene.jpg",
+      "difficulty": "B2"
+    }
+  ]
+} 

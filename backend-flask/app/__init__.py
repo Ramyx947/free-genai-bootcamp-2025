@@ -116,20 +116,9 @@ def create_app(config_name="development"):
         except Exception as e:
             raise e
 
-    @app.route("/api/health")
-    @handle_errors
+    @app.route("/health")
     def health_check():
-        try:
-            return jsonify(
-                {
-                    "status": "healthy",
-                    "timestamp": datetime.datetime.now(datetime.UTC).isoformat(),
-                    "version": "1.0.0",
-                }
-            )
-        except Exception as e:
-            app.logger.error(f"Health check error: {str(e)}")
-            raise e
+        return jsonify({"status": "healthy"}), 200
 
     # Add favicon route
     @app.route("/favicon.ico")

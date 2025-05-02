@@ -114,4 +114,9 @@ htmlcov/
 .coverage
 .coverage.*
 coverage.xml
-*.cover 
+*.cover
+
+# Environment variables
+.env
+.env.*
+!.env.example 

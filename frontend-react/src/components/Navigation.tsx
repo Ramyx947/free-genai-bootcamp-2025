@@ -1,7 +1,6 @@
-
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Menu, Headphones } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -43,18 +42,17 @@ export const Navigation = () => {
     };
   }, [location.pathname]);
 
-  const navItems = [
-    { href: '/dashboard', label: t('dashboard') },
-    { href: '/study-activities', label: t('studyActivities') },
-    { href: '/words', label: t('words') },
-    { href: '/groups', label: t('wordGroups') },
-    { href: '/sessions', label: t('sessions') },
-    { href: '/settings', label: t('settings') },
+  const navigationItems = [
+    { href: "/dashboard", label: "Dashboard" },
+    { href: "/study", label: "Study Activities" },
+    { href: "/groups", label: "Word Groups" },
+    { href: "/words", label: "Word Collection" },
+    { href: "/settings", label: "Settings" }
   ];
 
   const NavLinks = ({ mobile = false }) => (
     <>
-      {navItems.map((item) => {
+      {navigationItems.map((item) => {
         const isActive = location.pathname === item.href;
         const LinkComponent = (
           <Link

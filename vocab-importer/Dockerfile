@@ -1,43 +1,23 @@
-# Build stage
-FROM python:3.12-slim as builder
-
-WORKDIR /app
-
-# Install poetry
-RUN pip install poetry
-
-# Copy only dependency files
-COPY pyproject.toml poetry.lock ./
-
-# Install dependencies
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
-
-# Runtime stage
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Copy only necessary files from builder
-COPY --from=builder /app/requirements.txt .
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY src/ ./src/
+# Copy source code
+COPY . .
 
-# Set ownership
-RUN chown -R appuser:appuser /app
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5001/health || exit 1
 
-# Switch to non-root user
-USER appuser
+EXPOSE 5001
 
-# Set security-related environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PORT=5001 \
-    POETRY_NO_INTERACTION=1
-
-# Expose port
-EXPOSE ${PORT}
-
-# Run the application
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "5001"] 

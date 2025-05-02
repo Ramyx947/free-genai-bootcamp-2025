@@ -1,0 +1,9 @@
+# Environment variables
+.env
+
+# Data
+data/
+romanian_transcripts/
+
+# Logs
+*.log
