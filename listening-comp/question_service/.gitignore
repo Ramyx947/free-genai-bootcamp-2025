@@ -1,0 +1,9 @@
+# Environment variables
+.env
+
+# Generated questions
+data/
+questions/
+
+# Logs
+*.log

@@ -1,4 +1,3 @@
-
 import { RouteObject } from "react-router-dom";
 import Index from "@/pages/Index";
 import StudyActivities from "@/pages/StudyActivities";
@@ -17,6 +16,10 @@ import Support from "@/pages/Support";
 import Feedback from "@/pages/Feedback";
 import About from "@/pages/About";
 import NotFound from "@/pages/NotFound";
+import { ListeningPractice } from "@/components/study/ListeningPractice";
+import { SpeakingPractice } from '@/components/speaking/SpeakingPractice';
+import { WritingPractice } from "@/pages/WritingPractice";
+import { StudyActivities as StudyActivitiesComponent } from "@/components/study/StudyActivities";
 
 export const routes: RouteObject[] = [
   {
@@ -28,8 +31,8 @@ export const routes: RouteObject[] = [
     element: <Index />,
   },
   {
-    path: "/study-activities",
-    element: <StudyActivities />,
+    path: "/study",
+    element: <StudyActivitiesComponent />,
   },
   {
     path: "/study-activities/:id",
@@ -86,6 +89,18 @@ export const routes: RouteObject[] = [
   {
     path: "/about",
     element: <About />,
+  },
+  {
+    path: "/study/listening",
+    element: <ListeningPractice />,
+  },
+  {
+    path: "/study/speaking",
+    element: <SpeakingPractice />,
+  },
+  {
+    path: "/study/writing",
+    element: <WritingPractice />,
   },
   {
     path: "*",
